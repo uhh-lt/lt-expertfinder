@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Template</title>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+</head>
+<body class="w3-theme-l5">
+
+    <!-- Navbar -->
+    <div th:replace="fragments/general :: header"></div>
+
+    <!-- Page Container -->
+    <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+
+
+    <!-- End Page Container -->
+    </div>
+
+    <br>
+
+    <!-- Footer -->
+    <div th:replace="fragments/general :: footer"></div>
+
+    <script th:replace="fragments/general :: scripts"></script>
+</body>
+</html>

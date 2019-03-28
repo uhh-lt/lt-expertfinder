@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel='stylesheet' th:href="@{/style.css}">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script th:src="@{/js/scroll.js}"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <style>
+        html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+
+        .myfooter {}
+
+        .myfooter1 {
+            position: absolute; width: 100%; bottom: 0; margin-bottom: 52px;
+        }
+
+        .myfooter2 {
+            position: absolute; width: 100%; bottom: 0; margin-bottom: 0;
+        }
+
+        #expertsearchbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="w3-theme-l5">
+
+    <!-- Navbar -->
+    <div th:fragment="header">
+        <div class="w3-top">
+            <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+                <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+                <a th:href="@{/ui/reset}" ><span class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fas fa-chalkboard-teacher w3-margin-right"></i>LT Expert Finder</span></a>
+                <a th:href="@{/ui}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="View a ranked list of Experts"><i class="fas fa-list-ol"></i> List</a>
+                <a th:href="@{/graph}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Get an insight into the data"><i class="fa fa-project-diagram"></i> Graph</a>
+                <a th:href="@{/table}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Compare different Expert Retrieval Methods"><i class="fa fa-chart-bar"></i> Evaluation</a>
+                <form th:if="${expertQuery}" id="expertsearchbar" class="w3-right w3-hide-small" action="#" th:action="@{/postExpertQuery}" th:object="${expertQuery}" method="post">
+                    <input type="text" class="w3-bar-item w3-input w3-padding-large" placeholder="Search.." th:field="${expertQuery.topic}">
+                    <button class="w3-bar-item w3-button w3-padding-large w3-theme-d4" name="redirectTo" th:value="${redirectTo}" type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Navbar on small screens -->
+        <div id="navDemo" class="w3-top w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large" style="margin-top:51px">
+            <a th:href="@{/ui}" class="w3-bar-item w3-button w3-padding-large">List</a>
+            <a th:href="@{/graph}" class="w3-bar-item w3-button w3-padding-large">Graph</a>
+            <a th:href="@{/table}" class="w3-bar-item w3-button w3-padding-large">Evaluation</a>
+            <form th:if="${expertQuery}" action="#" th:action="@{/postExpertQuery}" th:object="${expertQuery}" method="post">
+                <input type="text" class="w3-bar-item w3-input w3-padding-large" placeholder="Search.." th:field="${expertQuery.topic}">
+                <button class="w3-bar-item w3-button w3-padding-large w3-theme-d4" name="redirectTo" th:value="${redirectTo}" type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <div th:fragment="footer">
+        <!--<footer class="w3-container w3-theme-d3 w3-padding-16" th:classappend="${result} or ${graph} or ${results} or ${aanprofile} ? myfooter : myfooter1">-->
+        <footer class="w3-container w3-theme-d3" th:classappend="${result} or ${graph} or ${results} or ${aanprofile} ? myfooter : myfooter2">
+            <p>©2019</p>
+        </footer>
+
+        <!--<footer class="w3-container w3-theme-d5" th:classappend="${result} or ${graph} or ${results} or ${aanprofile} ? myfooter : myfooter2">-->
+            <!--&lt;!&ndash;<p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>&ndash;&gt;-->
+        <!--</footer>-->
+    </div>
+
+    <script th:fragment="scripts">
+        // Accordion
+        function myFunction(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-theme-d1";
+            } else {
+                x.className = x.className.replace("w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-theme-d1", "");
+            }
+        }
+
+        // Used to toggle the menu on smaller screens when clicking on the menu button
+        function openNav() {
+            var x = document.getElementById("navDemo");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
+
+        var offset = 0;
+        function calculateOffset() {
+            var search2 = $('#expertsearch'),
+                height = search2.height();
+
+            var searchbar2 = $('#expertsearchbar'),
+                height2 = searchbar2.height();
+
+            var search = document.getElementById("expertsearch");
+
+
+            offset = search.offsetTop + height - height2;
+        }
+        calculateOffset();
+
+        var searchbar = document.getElementById("expertsearchbar");
+        window.onscroll = function() {showsearchbar()};
+        function showsearchbar() {
+            if (window.pageYOffset >= offset) {
+                searchbar.style.display='block';
+            } else {
+                searchbar.style.display='none';
+            }
+
+        }
+
+        function show(id) {
+            document.getElementById(id).style.display='block';
+        }
+
+        function hide(id) {
+            document.getElementById(id).style.display='none';
+        }
+
+        function toggle(id) {
+            var element =  document.getElementById(id);
+
+            if(element.style.display === 'none') {
+                element.style.display = 'block';
+            } else if (element.style.display === 'block') {
+                element.style.display = 'none';
+            }
+        }
+
+        function toggleAdvancedInput(id) {
+            var element =  document.getElementById(id);
+            var input = document.getElementById('advancedinput');
+            var icon = document.getElementById('advancedinputicon');
+
+
+            if(element.style.display === 'none') {
+                element.style.display = 'block';
+                input.setAttribute("value", "true");
+                icon.classList.remove("fa-angle-double-down");
+                icon.classList.add("fa-angle-double-up");
+            } else if (element.style.display === 'block') {
+                element.style.display = 'none';
+                input.setAttribute("value", "false");
+                icon.classList.remove("fa-angle-double-up");
+                icon.classList.add("fa-angle-double-down");
+            }
+
+            calculateOffset();
+        }
+
+        function sortTable(n, tablename, number) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById(tablename);
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < (rows.length - 1); i++) {
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if(number) {
+                            //check if the two rows should switch place:
+                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch= true;
+                                break;
+                            }
+                        }
+                    } else if (dir == "desc") {
+                        if(number) {
+                            //check if the two rows should switch place:
+                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount ++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script th:fragment="scrollscript" th:inline="javascript">
+        /*<![CDATA[*/
+
+        var result = /*[[${result}]]*/ null;
+        var graph =  /*[[${graph}]]*/ null;
+        if(result != null || graph != null) {
+            doScrolling('searchresult', 1000);
+        }
+
+        /*]]>*/
+    </script>
+
+</body>
+</html>

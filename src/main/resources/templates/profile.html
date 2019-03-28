@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Expert Profile</title>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+    <style>
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+    </style>
+
+</head>
+<body class="w3-theme-l5">
+
+    <!-- Navbar -->
+    <div th:replace="fragments/general :: header"></div>
+
+    <!-- Page Container -->
+    <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+
+
+        <!-- MODAL Collaborations -->
+        <div th:if="${aanprofile.collaborations.size() > 10}" id="all-collaborations" class="w3-modal" style="padding-bottom:100px;">
+            <div class="w3-modal-content" style="width:80%;">
+                <div class="w3-container">
+                    <span th:onclick="'hide(\'all-collaborations\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
+                    <h3 th:text="'All Collaborators of ' + ${#strings.capitalizeWords(aanprofile.name)}"></h3>
+                    <table id="collaboration-table-modal" class="w3-table-all w3-hoverable" style="margin-bottom: 16px;">
+                        <tr class="w3-theme">
+                            <th onclick="sortTable(0, 'collaboration-table-modal', false)">Name</th>
+                            <th onclick="sortTable(1, 'collaboration-table-modal', true)">Count</th>
+                        </tr>
+                        <tr th:each="collaboration : ${aanprofile.collaborations}" th:onclick="'window.location.href = \'' + @{/profile/{id}(id=${collaboration.id})} + '\''">
+                            <td th:text="${#strings.capitalizeWords(collaboration.name)}"></td>
+                            <td th:text="${collaboration.count}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL Publications -->
+        <div th:if="${aanprofile.publications.size() > 10}" id="all-publications" class="w3-modal" style="padding-bottom:100px;">
+            <div class="w3-modal-content" style="width:80%;">
+                <div class="w3-container">
+                    <span th:onclick="'hide(\'all-publications\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
+                    <h3 th:text="'All Publications of ' + ${#strings.capitalizeWords(aanprofile.name)}"></h3>
+                    <table id="publication-table-modal" class="w3-table-all w3-hoverable" style="margin-bottom: 16px;">
+                        <tr class="w3-theme">
+                            <th onclick="sortTable(0, 'publication-table-modal', false)">File</th>
+                            <th onclick="sortTable(1, 'publication-table-modal', false)">Title</th>
+                            <th onclick="sortTable(2, 'publication-table-modal', true)">Year</th>
+                            <th onclick="sortTable(3, 'publication-table-modal', false)">Venue</th>
+                            <th onclick="sortTable(4, 'publication-table-modal', true)">Citations</th>
+                        </tr>
+                        <tr th:each="publication, iter : ${aanprofile.publications}" th:onclick="'window.location=\'http://aclweb.org/anthology/' + ${publication.file} + '.pdf\';'">
+                            <td th:text="${publication.file}"></td>
+                            <td th:text="${publication.title}"></td>
+                            <td th:text="${publication.year}"></td>
+                            <td th:text="${publication.venue}"></td>
+                            <td th:text="${publication.citations}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="w3-col m8" style="padding-right:16px">
+
+            <div class="w3-card w3-round w3-white">
+                <div class="w3-container w3-padding">
+                    <img th:if="${googleprofile != null}" th:src="${googleprofile.img}" style="float:left; margin-right:16px; width:128px; height:128px; object-fit: cover;"/>
+                    <img th:if="${googleprofile == null}" th:src="@{/avatar_scholar_128.png}" style="float:left; margin-right:16px; width:128px; height:128px; object-fit: cover;"/>
+                    <a title="Go to Google Scholar" target="_blank" th:href="'https://scholar.google.com/citations?view_op=search_authors&hl=en&mauthors='+${aanprofile.name}"><h3 th:if="${aanprofile != null}" style="margin-top:-5px" th:inline="text" th:text="${#strings.capitalizeWords(aanprofile.name)}"></h3></a>
+                    <p th:if="${googleprofile != null}" th:inline="text">[[${googleprofile.description}]]</p>
+                    <p th:if="${aanprofile != null}" style="margin: 0px!important">
+                        <span class="w3-tag w3-small" style="margin-right: 2px;" th:each="keyword : ${aanprofile.keywords}" th:inline="text" th:classappend="${keyword[1]}"><a th:href="@{'/searchTopic/' + ${keyword[0]}}">[[${keyword[0]}]]</a></span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="w3-card w3-round w3-white" style="margin-top: 16px;">
+                <div>
+                    <table id="publication-table" class="evaluation-table w3-table-all w3-hoverable">
+                        <tr class="w3-theme">
+                            <th style="width: 100px;" onclick="sortTable(0, 'publication-table', false)">File</th>
+                            <th onclick="sortTable(1, 'publication-table', false)">Title</th>
+                            <th onclick="sortTable(2, 'publication-table', true)">Year</th>
+                            <th onclick="sortTable(3, 'publication-table', false)">Venue</th>
+                            <th onclick="sortTable(4, 'publication-table', true)">Citations</th>
+                        </tr>
+                        <tr th:each="publication, iter : ${aanprofile.publications.subList(0, T(Math).min(aanprofile.publications.size(), 10))}" th:classappend="'rownumber'+${iter.index / 10}">
+                            <td><a th:text="${publication.file}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                            <td><a th:text="${publication.title}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                            <td><a th:text="${publication.year}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                            <td><a th:text="${publication.venue}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                            <td><a th:text="${publication.citations}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        </tr>
+                    </table>
+                    <!--<a class="publication-table-showmore" onclick="extendTable('publication-table')">Show more...</a>-->
+                    <!--<a class="publication-table-showless" onclick="limitTable('publication-table')">Show less...</a>-->
+                </div>
+            </div>
+            <div th:if="${aanprofile.publications.size() > 10}" class="w3-content" style="max-width:80px; padding-top:8px;">
+                <button th:onclick="'show(\'all-publications\');'" class="w3-button w3-theme" style="margin-right: -16px; padding: 4px 10px; width:80px;">View all</button>
+            </div>
+        </div>
+
+        <div class="w3-col m4">
+
+            <div class="w3-card w3-round w3-white">
+                <div class="w3-container w3-padding" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
+
+                    <table class="w3-table">
+                        <tr class="w3-theme">
+                            <th></th>
+                            <th>AAN</th>
+                            <th th:if="${googleprofile != null}">Scholar</th>
+                        </tr>
+                        <tr>
+                            <td>Citations</td>
+                            <td>[[${aanprofile.citationcount}]]</td>
+                            <td th:if="${googleprofile != null}">[[${googleprofile.citations}]]</td>
+                        </tr>
+                        <tr>
+                            <td>H-Index</td>
+                            <td>[[${aanprofile.hindex}]]</td>
+                            <td th:if="${googleprofile != null}">[[${googleprofile.hindex}]]</td>
+                        </tr>
+                        <tr>
+                            <td>i20</td>
+                            <td></td>
+                            <td th:if="${googleprofile != null}">[[${googleprofile.i20}]]</td>
+                        </tr>
+                    </table>
+
+                    <svg class="mysvg" style="width:100%; height:200px;"></svg>
+
+                </div>
+            </div>
+
+            <div class="w3-card w3-round w3-white">
+                <div style="margin-top: 16px;">
+                    <table id="collaboration-table" class="evaluation-table w3-table-all w3-hoverable">
+                        <tr class="w3-theme">
+                            <th onclick="sortTable(0, 'collaboration-table', false)">Collaborators</th>
+                            <th onclick="sortTable(1, 'collaboration-table', true)">Count</th>
+                        </tr>
+                        <tr th:each="collaboration : ${aanprofile.collaborations.subList(0, T(Math).min(aanprofile.collaborations.size(), 10))}" th:onclick="'window.location.href = \'' + @{/profile/{id}(id=${collaboration.id})} + '\''">
+                            <td th:text="${#strings.capitalizeWords(collaboration.name)}"></td>
+                            <td th:text="${collaboration.count}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div th:if="${aanprofile.collaborations.size() > 10}" class="w3-content" style="max-width:80px; padding-top:8px;">
+                <button th:onclick="'show(\'all-collaborations\');'" class="w3-button w3-theme" style="margin-right: -16px; padding: 4px 10px; width:80px">View all</button>
+            </div>
+        </div>
+
+        <div th:if="${wikiprofile != null && wikiprofile.size() > 0}" class="w3-col m12">
+            <div style="margin-top: 16px;">
+                <table id="wikidata-table" class="evaluation-table w3-table-all w3-hoverable" style="margin-bottom: 16px;">
+                    <tr class="w3-theme">
+                        <th>awards</th>
+                        <!--<th>birthday</th>-->
+                        <!--<th>countires</th>-->
+                        <th>educations</th>
+                        <th>employers</th>
+                        <th>fieldofworks</th>
+                        <!--<th>google</th>-->
+                        <!--<th>img</th>-->
+                        <th>occupations</th>
+                        <th>twitter</th>
+                        <!--<th>website</th>-->
+                    </tr>
+                    <tr th:each="wiki : ${wikiprofile}">
+                        <td th:if="${wiki.size == 0}" colspan="11" style="text-align: center;"><a th:text="'Go to wikidata profile: '+${wiki.wikidataid}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.awards}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <!--<td th:if="${wiki.size > 0}" th:text="${wiki.birthday}"></td>-->
+                        <!--<td th:if="${wiki.size > 0}" th:text="${wiki.countires}"></td>-->
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.educations}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.employers}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.fieldofworks}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <!--<td th:if="${wiki.size > 0}" th:text="${wiki.google}"></td>-->
+                        <!--<td th:if="${wiki.size > 0}" th:text="${wiki.img}"></td>-->
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.occupations}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <td th:if="${wiki.size > 0}"><a th:text="${wiki.twitter}" th:href="'https://www.wikidata.org/wiki/' + ${wiki.wikidataid}" target="_blank" style="display:block; text-decoration: none;"></a></td>
+                        <!--<td th:if="${wiki.size > 0}" th:text="${wiki.size}"></td>-->
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    <!-- End Page Container -->
+    </div>
+
+    <br>
+
+    <!-- Footer -->
+    <div th:replace="fragments/general :: footer"></div>
+
+    <script th:replace="fragments/general :: scripts"></script>
+
+    <!--<script>-->
+        <!--var showing = {};-->
+        <!--showing['publication-table'] = 0;-->
+
+        <!--function limitTable(tablename) {-->
+            <!--showing[tablename] = showing[tablename] - 1;-->
+            <!--showTable(tablename);-->
+            <!--updateShowMore(tablename);-->
+        <!--}-->
+
+        <!--function extendTable(tablename) {-->
+            <!--showing[tablename] = showing[tablename] + 1;-->
+            <!--showTable(tablename);-->
+            <!--updateShowMore(tablename);-->
+        <!--}-->
+
+        <!--function updateShowMore(tablename) {-->
+            <!--var table = document.getElementById(tablename);-->
+            <!--var rows = Math.ceil(table.rows.length / 10.0);-->
+            <!--var showMoreButton = "."+tablename+"-showmore";-->
+            <!--var showLessButton = "."+tablename+"-showless";-->
+
+            <!--if(showing[tablename] == 0 && showing[tablename] < rows-1) {-->
+                <!--$(showMoreButton).show();-->
+                <!--$(showLessButton).hide();-->
+            <!--} else if (showing[tablename] < rows-1) {-->
+                <!--$(showMoreButton).show();-->
+                <!--$(showLessButton).show();-->
+            <!--} else {-->
+                <!--$(showMoreButton).hide();-->
+                <!--$(showLessButton).show();-->
+            <!--}-->
+            <!--// TODO: hide both?!?!-->
+        <!--}-->
+
+        <!--function showTable(tablename) {-->
+            <!--var table = document.getElementById(tablename);-->
+            <!--var rows = table.rows.length / 10 + 1;-->
+
+            <!--for (var i = 0; i < rows; i++) {-->
+                <!--if( i <= showing[tablename]) {-->
+                    <!--$('.rownumber'+i).show();-->
+                <!--} else {-->
+                    <!--$('.rownumber'+i).hide();-->
+                <!--}-->
+            <!--}-->
+        <!--}-->
+
+        <!--updateShowMore('publication-table');-->
+        <!--showTable('publication-table');-->
+
+        <!--function stuff(tablename) {-->
+
+
+
+        <!--}-->
+    <!--</script>-->
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var $container = $('.mysvg'),
+            width = $container.width(),
+            height = $container.height();
+
+        var mydata = /*[[${aanprofile.citationsPerYear}]]*/ null;
+        console.log(mydata);
+
+        var margin = {top: 20, right: 20, bottom: 30, left: 30};
+
+        width = width - margin.left - margin.right,
+        height = height - margin.top - margin.bottom;
+
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+        var y = d3.scale.linear().range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+        var svg = d3.select("svg")
+            // .attr("width", width + margin.left + margin.right)
+            // .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+
+        var data = new Array();
+
+        mydata.forEach(function(d) {
+            var entry = {};
+            entry['date'] = d[0];
+            entry['citations'] = d[1];
+            data.push(entry);
+        });
+
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.citations; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)" );
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            // .attr("transform", "rotate(-90)")
+            .attr("y", -4)
+            .attr("x", 13)
+            .style("text-anchor", "end")
+            .text("Citations");
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.citations); })
+            .attr("height", function(d) { return height - y(d.citations); });
+
+        /*]]>*/
+    </script>
+
+</body>
+</html>

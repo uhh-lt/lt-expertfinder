@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Expert Evaluation</title>
+    <style>
+        ul {
+            padding-left: 20px;
+        }
+        .w3-dropdown-hover:first-child {
+            background-color: #eee;
+            color: #000;
+            width: 200px;
+        }
+        .highlight {
+            display: inline-block;
+            background-color: yellow;
+            z-index: -1;
+        }
+    </style>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<div th:include="fragments/general :: header" th:with="redirectTo='table'"></div>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+
+    <div th:include="fragments/search :: expertSearchForm" th:with="redirectTo='table', showMethod=false"></div>
+
+    <div id="searchresult" style="padding-top: 16px;">
+    <table  th:if="${result != null && result.get(0) != null}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
+        <tr class="w3-theme">
+            <th>#</th>
+            <th>Global Citations</th>
+            <!--<th>Elastic</th>-->
+            <th>Model 2</th>
+            <!--<th>k-step</th>-->
+            <!--<th>infinite</th>-->
+            <th>Relevance Propagation</th>
+            <th>Weighted Relevance Propagation</th>
+            <!--<th>pagerank</th>-->
+        </tr>
+        <tr th:each="i : ${#numbers.sequence( 0, result.get(0).size() - 1)}">
+            <td th:text="${i + 1}"></td>
+            <td th:each="j : ${#numbers.sequence( 0, result.size() - 1)}" th:with="expert = ${result.get(j).get(i)}" th:inline="text">
+                <a onmouseenter="evalsearch(this)" class="evaluation-name" href="#" th:onclick="'show(\'' + ${j} + 'm' + ${expert.id} + '\');'">[[${#strings.capitalizeWords(expert.name)}]]</a>
+
+                <div th:id="${j} + 'm' + ${expert.id}" class="w3-modal" style="padding-bottom:100px;">
+                    <div class="w3-modal-content w3-container"  style="width:80%; padding-bottom:16px">
+
+                            <span th:onclick="'hide(\'' + ${j} + 'm' + ${expert.id} + '\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
+                            <h4 th:inline="text"><a th:inline="text" th:href="@{'/profile/' + ${expert.id}}">[[${#strings.capitalizeWords(expert.name)}]]</a> is assumed to be an expert for [[${#strings.capitalizeWords(expertTopic.topic)}]] because of the following publications:</h4>
+
+                        <!-- Right Column -->
+                        <div class="w3-col m3" style="margin-bottom:16px;">
+                            <table class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
+                                <tr class="w3-theme">
+                                    <th><b>Statistics</b></th>
+                                    <th>Local</th>
+                                    <th>Global</th>
+                                </tr>
+                                <tr>
+                                    <td>H-Index</td>
+                                    <td>[[${expert.localHindex}]]</td>
+                                    <td>[[${expert.hindex}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>Publications</td>
+                                    <td th:inline="text">[[${expert.localpublications}]]</td>
+                                    <td th:inline="text">[[${expert.publications}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>Citations</td>
+                                    <td th:inline="text">[[${expert.localcitations}]]</td>
+                                    <td th:inline="text">[[${expert.citations}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>Collaborations</td>
+                                    <td th:inline="text">[[${expert.localcollaborations}]]</td>
+                                    <td th:inline="text">[[${expert.collaborations}]]</td>
+                                </tr>
+                            </table>
+                            <!-- End Right Column -->
+                        </div>
+
+                        <!-- Left Column -->
+                        <div>
+                            <table th:id="'modal-table-'+${j}+'m'+${expert.id}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
+                                <tr class="w3-theme">
+                                    <th style="width: 110px;" th:onclick="'sortTable(0, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">File</th>
+                                    <th th:onclick="'sortTable(1, \'modal-table-'+${j}+'m'+${expert.id}+'\', true)'">Relevance</th>
+                                    <th th:onclick="'sortTable(2, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">Title</th>
+                                </tr>
+                                <tr th:each="item : ${expert.documents}">
+                                    <td th:inline="text">
+                                        <a target="_blank" th:href="'http://aclweb.org/anthology/' + ${item.getFile()} + '.pdf'">[[${item.getFile()}]]</a>
+                                    </td>
+                                    <td th:text="${item.getRelevance()}"></td>
+                                    <td th:text="${item.getTitle()}"></td>
+                                </tr>
+                            </table>
+                        <!-- End Left Column -->
+                        </div>
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    </div>
+
+<!-- End Page Container -->
+</div>
+
+<br>
+
+<!-- Footer -->
+<div th:replace="fragments/general :: footer"></div>
+
+<script th:replace="fragments/general :: scripts"></script>
+
+<script th:replace="fragments/general :: scrollscript"></script>
+
+<script>
+    var elements = Array.from(document.getElementsByClassName("evaluation-name"));
+
+    function evalsearch(hoverelement) {
+
+        console.log(hoverelement.textContent);
+        var patt = new RegExp(".*"+hoverelement.textContent+".*");
+
+        elements.forEach(function(element) {
+            if(patt.test(element.textContent)) {
+                element.classList.add("highlight");
+            } else {
+                element.classList.remove("highlight");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

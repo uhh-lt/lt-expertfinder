@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Expert Graph</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+
+    <script type="text/javascript" src="http://d3js.org/d3.v2.js"></script>
+    <script th:src="@{/js/basic.js}"></script>
+    <script th:src="@{/js/controls.js}"></script>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<div th:include="fragments/general :: header" th:with="redirectTo='graph'"></div>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:100%;margin-top:80px">
+
+    <!-- The Grid -->
+    <div style="max-width: 1400px;margin: auto; padding-left:16px; padding-right:16px;" th:include="fragments/search :: expertSearchForm" th:with="redirectTo='graph', showMethod=true"></div>
+
+    <div id="searchresult" th:if="${graph}" class="chart-container" style="position:relative;">
+        <div class="w3-left w3-card w3-round w3-white" style="position:absolute; margin-top:16px;">
+            <div class="w3-container w3-padding">
+                <input style="margin: 10px 0; display: inline-block; padding: 7px;" class="w3-border" type="text" id="search">
+                <button onclick="search()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-highlighter"></i> Highlight</button>
+            </div>
+        </div>
+
+        <div class="w3-left w3-card w3-round w3-white" style="position:absolute; margin-top:106px; display:none;" id="controls">
+            <div class="w3-container w3-padding">
+                <span onclick="closeControls()" style="border-top-right-radius: 4px;" class="w3-button w3-theme w3-display-topright">&times;</span>
+                <a id="control-link" target="_blank" href=""><h4 id="control-title" style="margin-bottom: 10px; margin-top: 0px; width: 180px;"></h4></a>
+                <table>
+                    <tr id="control-collaborations">
+                        <td style="width:55%">Authors:</td>
+                        <td><button id="expand-collaborations" onclick="expandCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                        <td><button id="contract-collaborations" onclick="contractCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                    </tr>
+                    <tr id="control-publications">
+                        <td id="publications-name" style="width:55%">Publications:</td>
+                        <td><button id="expand-publications" onclick="expandPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                        <td><button id="contract-publications" onclick="contractPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                    </tr>
+                    <tr id="control-citations">
+                        <td style="width:55%">Documents:</td>
+                        <td><button id="expand-citations" onclick="expandCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                        <td><button id="contract-citations" onclick="contractCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+        <svg width="1600" height="900" style="margin-top: 16px;">
+            <defs></defs>
+        </svg>
+    </div>
+
+    <!-- End Page Container -->
+</div>
+
+<br>
+
+<!-- Footer -->
+<div th:replace="fragments/general :: footer"></div>
+
+<script th:replace="fragments/general :: scripts"></script>
+<script th:replace="fragments/general :: scrollscript"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var graph = /*[[${graph}]]*/ null;
+    /*]]>*/
+</script>
+<script th:src="@{/js/graph.js}"></script>
+</body>
+</html>
+

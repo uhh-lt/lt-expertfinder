@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Expert Finder</title>
+    <style>
+        @media (min-width:601px) {
+            .my-padding-right {
+                margin-right:16px;
+            }
+        }
+    </style>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+</head>
+<body class="w3-theme-l5">
+
+<th:block th:object="${result}">
+
+    <!-- Navbar -->
+    <div th:include="fragments/general :: header" th:with="redirectTo='ui'"></div>
+
+    <!-- Page Container -->
+    <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+        <!-- The Grid -->
+        <div th:include="fragments/search :: expertSearchForm" th:with="redirectTo='ui', showMethod=true"></div>
+
+        <div id="searchresult" th:if="${result}" class="w3-row">
+
+            <!-- Left Column -->
+            <div class="w3-col m9">
+
+                <div style="margin-top:16px; margin-right:16px;">
+                    <a href="javascript:void(0)" onclick="openTab(event, 'Experts');">
+                        <div class="w3-container w3-theme w3-third tablink w3-bottombar w3-hover-light-grey w3-my-border" style="margin-bottom: 8px; border-top-left-radius: 4px; border-bottom-left-radius: 4px;"><h4 style="margin-bottom: 4px;">Experts</h4></div>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTab(event, 'Documents');">
+                        <div class="w3-container w3-theme w3-third tablink w3-bottombar w3-hover-light-grey" style="border-top-right-radius: 4px;"><h4 style="margin-bottom: 4px;">Documents</h4></div>
+                    </a>
+                    <div class="w3-container w3-third tablink w3-bottombar" style="margin-bottom: 8px;"><h4 style="margin-bottom: 4px; color: #f5f7f8;">...</h4></div>
+                </div>
+
+                <div id="Experts" class="tab">
+                    <div class="w3-row my-padding-right" style="margin-top: 16px;" th:each="expert : ${result}">
+                        <div class="w3-col m12">
+                            <div class="w3-card w3-round w3-white">
+                                <div class="w3-container w3-padding">
+
+                                    <div class="w3-cell-row">
+                                        <div class="w3-cell" style="width: 120px">
+                                            <img th:src="${expert.image}" alt="Avatar" class="w3-circle" style="width:120px; height:120px; object-fit: cover;">
+                                        </div>
+                                        <div class="w3-container w3-cell w3-cell-bottom" style="height: 100%">
+                                            <button th:onclick="'show(\'' + ${expert.id} + '\'); sortTable(1, \'modal-table-'+${expert.id}+'\', true); sortTable(1, \'modal-table-'+${expert.id}+'\', true);'" class="w3-right w3-margin-left w3-button w3-theme" style="margin-right: -16px; padding: 4px 10px;"><i class="fas fa-question"></i></button>
+
+                                            <div th:id="${expert.id}" class="w3-modal">
+                                                <div class="w3-modal-content" style="width:80%;">
+                                                    <div class="w3-container">
+                                                        <span th:onclick="'hide(\'' + ${expert.id} + '\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
+                                                        <h4 th:inline="text"><a th:inline="text" target="_blank" th:href="@{'/profile/' + ${expert.id}}">[[${#strings.capitalizeWords(expert.name)}]]</a> is assumed to be an expert for [[${#strings.capitalizeWords(expertTopic.topic)}]] because of the following publications:</h4>
+
+                                                        <table th:id="'modal-table-'+${expert.id}" class="w3-table-all w3-hoverable" style="margin-bottom: 16px;">
+                                                            <tr class="w3-theme">
+                                                                <th style="width: 100px;" th:onclick="'sortTable(0, \'modal-table-'+${expert.id}+'\', false)'">File</th>
+                                                                <th th:onclick="'sortTable(1, \'modal-table-'+${expert.id}+'\', true)'">Relevance</th>
+                                                                <th th:onclick="'sortTable(2, \'modal-table-'+${expert.id}+'\', false)'">Title</th>
+                                                            </tr>
+                                                            <tr th:each="item : ${expert.documents}">
+                                                                <td th:inline="text">
+                                                                    <a target="_blank" th:href="'http://aclweb.org/anthology/' + ${item.getFile()} + '.pdf'">[[${item.getFile()}]]</a>
+                                                                </td>
+                                                                <td th:text="${item.getRelevance()}"></td>
+                                                                <td th:text="${item.getTitle()}"></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <h6 style="margin: 0px !important"><a th:text="${#strings.capitalizeWords(expert.name)}" th:href="@{'/profile/' + ${expert.id}}"></a></h6>
+                                            <p style="font-size: 8pt; margin: 0px !important" th:inline="text">h-index: [[${expert.hindex}]] | #Paper: [[${expert.publications}]] | #Citations: [[${expert.citations}]]</p>
+                                            <p style="margin-top: 8px; margin-bottom: 8px; min-height: 22px;" th:text="${expert.getDescription()}"></p>
+                                            <p style="margin: 0px!important; min-height: 44px;">
+                                                <span class="w3-tag w3-small" style="margin-right: 2px;" th:each="keyword, iter : ${expert.keywords}" th:inline="text" th:classappend="'w3-theme'+${iter.index < 5 ? '-d'+(5 - iter.index) : iter.index == 5 ? '' : '-l'+(iter.index - 5)}"><a th:href="@{'/searchTopic/' + ${keyword}}">[[${keyword}]]</a></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Documents" class="tab" style="display:none">
+                    <div class="w3-row my-padding-right" style="margin-top: 16px;" th:if="${documentResult != null && documentResult.size() > 0}" th:each="document : ${documentResult}">
+                        <div class="w3-col m12">
+                            <div class="w3-card w3-round w3-white">
+                                <div class="w3-container w3-padding">
+                                    <a target="_blank" th:href ="'http://aclweb.org/anthology/' + ${document.file} + '.pdf'"><h4 th:text="${document.title}"></h4></a>
+                                    <p>
+                                        <a style="margin-right:8px;" th:each="author : ${document.getAuthors()}" th:text="${#strings.capitalizeWords(author.name) }" th:href="@{'/profile/' + ${author.id}}"></a>
+                                           Cited by [[${document.citations}]]. Published [[${document.year}]] in [[${document.getVenue()}]].
+                                    </p>
+                                    <p style="margin: 0px!important;">
+                                        <span class="w3-tag w3-small" style="margin-right: 2px;" th:each="keyword, iter : ${document.keywords}" th:inline="text" th:classappend="'w3-theme'+${iter.index < 5 ? '-d'+(5 - iter.index) : iter.index == 5 ? '' : '-l'+(iter.index - 5)}"><a th:href="@{'/searchTopic/' + ${keyword}}">[[${keyword}]]</a></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w3-row my-padding-right" style="margin-top: 16px;" th:if="${documentResult == null || (documentResult != null && documentResult.size() == 0)}">
+                        <p class="w3-large">
+                            This method doesn't rank documents!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- End Left Column -->
+            </div>
+
+            <!-- Right Column -->
+            <div class="w3-col m3" style="margin-top: 16px;">
+
+                <div class="w3-card w3-round w3-white">
+
+                    <header class="w3-container w3-theme" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                        <h4>Statistics</h4>
+                    </header>
+
+                    <th:block th:object="${statistics}">
+                        <div th:if="${statistics}" class="w3-container">
+                            <p th:inline="text">
+                                Relevant Documents: [[${statistics.relevantDocs}]]<br/>
+                                Selected Documents: [[${statistics.selectedDocs}]]<br/>
+                                Relevant Authors: [[${statistics.authors}]]
+                            </p>
+                            <hr>
+                            <p th:inline="text">
+                                #Publications: [[${statistics.publications}]]<br/>
+                                #Citations: [[${statistics.citations}]]<br/>
+                                #Collaborations: [[${statistics.collaborations}]]
+                            </p>
+                        </div>
+                    </th:block>
+                </div>
+
+                <!-- End Right Column -->
+            </div>
+
+            <!-- End Grid -->
+        </div>
+
+        <!-- End Page Container -->
+    </div>
+    <br>
+
+    <!-- Footer -->
+    <div th:replace="fragments/general :: footer"></div>
+
+    <script th:replace="fragments/general :: scripts"></script>
+
+    <script th:replace="fragments/general :: scrollscript"></script>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, x, tablinks;
+            x = document.getElementsByClassName("tab");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < x.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" w3-my-border", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.firstElementChild.className += " w3-my-border";
+        }
+    </script>
+
+</th:block>
+
+</body>
+</html>

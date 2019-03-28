@@ -1,0 +1,113 @@
+line {
+    stroke: #999;
+    stroke-opacity: 0.6;
+}
+
+path.link {
+    fill: none;
+    stroke: #666;
+    /*stroke-width: 1.5px;*/
+}
+
+path.link.collaboration {
+    /*stroke: url(#collaboration);*/
+}
+
+path.link.authorship {
+    /*stroke: url(#authorship);*/
+}
+
+path.link.publication {
+    /*stroke: url(#publication);*/
+}
+
+path.link.citation {
+    /*stroke: url(#citation);*/
+}
+
+marker#mcollaboration {
+    fill: #0174DF;
+}
+
+marker#mauthorship {
+    fill: #FFBF00;
+}
+
+marker#mpublication {
+    fill: #DF7401;
+}
+
+marker#mcitation {
+    fill: #04B404;
+}
+
+path.link.resolved {
+    stroke-dasharray: 0,2 1;
+}
+
+circle {
+    /*fill: #ccc;*/
+    stroke: #333;
+    stroke-width: 1.5px;
+}
+
+circle.selected {
+    /*fill: #ccc;*/
+    stroke: red;
+    stroke-width: 3px;
+}
+
+text {
+    font: 10px sans-serif;
+    pointer-events: none;
+}
+
+text.shadow {
+    stroke: #fff;
+    stroke-width: 3px;
+    stroke-opacity: .8;
+}
+
+.mytable {
+    width: 100%;
+    border-spacing: 0px;
+}
+
+.mytable td {
+    width: 50%;
+}
+
+.mytable td:first-child {
+    padding-right: 8px;
+}
+
+.evaluation-table {
+    border-collapse: separate;
+    border-radius: 4px;
+}
+
+.evaluation-table tr:first-child th:first-child {
+    border-top-left-radius: 4px;
+}
+
+
+.evaluation-table tr:first-child th:last-child {
+    border-top-right-radius: 4px;
+}
+
+.evaluation-table tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+}
+
+
+.evaluation-table tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
+}
+
+.w3-my-border {
+    border-bottom-color: #435761 !important;
+}
+
+#Documents a h4 {
+    text-decoration: none;
+}
