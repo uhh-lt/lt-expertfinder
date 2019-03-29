@@ -1,6 +1,6 @@
 DELIMITER //
 
-create function add_authorAAN ( name_ varchar(255) )
+create function add_authorAAN ( name_ varchar(255), altname_ varchar(255) )
   RETURNS BIGINT(20) DETERMINISTIC MODIFIES SQL DATA
   BEGIN
     declare aid int UNSIGNED default 0;
@@ -12,7 +12,7 @@ create function add_authorAAN ( name_ varchar(255) )
     select a.id into aid from authors_aan as a WHERE a.name = name_;
     if aid = 0 then
       -- create new author
-      insert into authors_aan set name = name_;
+      insert into authors_aan set name = name_, alt_name = altname_;
       select LAST_INSERT_ID() into aid;
     end if;
 
