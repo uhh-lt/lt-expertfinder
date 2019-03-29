@@ -36,7 +36,7 @@ services:
         soft: 8192
         hard: 8192
     volumes:
-      - ${PWD}/es-data:/usr/share/elasticsearch/data
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
   # END: ELASTICSEARCH
 
   # BEGIN: mysql
@@ -49,8 +49,9 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_PASSWORD=xpertfinder
     volumes:
-      - ${PWD}/mysql-data:/var/lib/mysql
-      - ${PWD}/mysql-config:/etc/mysql/conf.d
+      - ./data/mysql:/var/lib/mysql
+      - ./config/mysql:/etc/mysql/conf.d
+      - ./scripts/mysql/:/docker-entrypoint-initdb.d
     command: ["--character-set-server=utf8mb4", "--character-set-client-handshake=FALSE", "--collation-server=utf8mb4_unicode_ci"]
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pxpertfinder", "-uxpertfinder"]
@@ -69,7 +70,7 @@ services:
       - MYSQL_USERNAME=root
       - MYSQL_ROOT_PASSWORD=root
     ports:
-     - 10301:80
+     - 80:80
     networks:
      - anet
    # END: phpmyadmin
@@ -85,7 +86,7 @@ services:
       - elastichostname=elasticsearch
       - elasticport=9200
     ports:
-     - 10300:8080
+     - 8080:8080
     networks:
      - anet
   # END: ltxpertfinder

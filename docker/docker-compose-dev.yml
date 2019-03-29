@@ -39,7 +39,7 @@ services:
         soft: 8192
         hard: 8192
     volumes:
-      - ${PWD}/data/elasticsearch:/usr/share/elasticsearch/data
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
   # END: ELASTICSEARCH
 
   # BEGIN: KIBANA
@@ -65,8 +65,9 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_PASSWORD=xpertfinder
     volumes:
-      - ${PWD}/data/mysql:/var/lib/mysql
-      - ${PWD}/config/mysql:/etc/mysql/conf.d
+      - ./data/mysql:/var/lib/mysql
+      - ./config/mysql:/etc/mysql/conf.d
+      - ./scripts/mysql/:/docker-entrypoint-initdb.d
     command: ["--character-set-server=utf8mb4", "--character-set-client-handshake=FALSE", "--collation-server=utf8mb4_unicode_ci"]
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pxpert", "-uxpert"]
@@ -91,12 +92,3 @@ services:
     networks:
      - anet
    # END: phpmyadmin
-
-   # BEGIN: ltkeyterms
-  ltkeyterms:
-    image: uhh-lt/lt-keyterms
-    ports:
-      - 8888:8080
-    networks:
-      - anet
-   # END: ltkeyterms
