@@ -1,0 +1,102 @@
+######
+##
+# 1) start: docker-compose -f docker-compose-dev.yml up -d <services>
+# 2) attach: docker attach ...
+# 3) detach: detach with <CTRL-p> <CTRL-q>
+# 4) stop: docker-compose -f docker-compose-dev.yml down
+##
+######
+version: '2.3'
+
+networks:
+  anet:
+
+services:
+
+  # BEGIN: ELASTICSEARCH
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - anet
+    environment:
+      - cluster.name=escluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 131072
+        hard: 131072
+      nproc:
+        soft: 8192
+        hard: 8192
+    volumes:
+      - ${PWD}/data/elasticsearch:/usr/share/elasticsearch/data
+  # END: ELASTICSEARCH
+
+  # BEGIN: KIBANA
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.3
+    ports:
+      - 5601:5601
+    networks:
+      - anet
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+  # END: KIBANA
+
+  # BEGIN: mysql
+  mysql:
+    image: "mysql:5.7"
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=xpertfinder
+      - MYSQL_USER=xpertfinder
+      - MYSQL_PORT=3306
+      - MYSQL_PASSWORD=xpertfinder
+    volumes:
+      - ${PWD}/data/mysql:/var/lib/mysql
+      - ${PWD}/config/mysql:/etc/mysql/conf.d
+    command: ["--character-set-server=utf8mb4", "--character-set-client-handshake=FALSE", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pxpert", "-uxpert"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+    networks:
+      - anet
+  # END: mysql
+
+  # BEGIN: phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - MYSQL_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+     - 80:80
+    volumes:
+     - /sessions
+    networks:
+     - anet
+   # END: phpmyadmin
+
+   # BEGIN: ltkeyterms
+  ltkeyterms:
+    image: uhh-lt/lt-keyterms
+    ports:
+      - 8888:8080
+    networks:
+      - anet
+   # END: ltkeyterms

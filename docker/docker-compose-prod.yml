@@ -1,0 +1,91 @@
+######
+##
+# 1) start: docker-compose -f docker-compose-prod.yml up -d <services>
+# 2) attach: docker attach ...
+# 3) detach: detach with <CTRL-p> <CTRL-q>
+# 4) stop: docker-compose -f docker-compose-prod.yml down
+##
+######
+version: '2.3'
+
+networks:
+  anet:
+
+services:
+
+  # BEGIN: ELASTICSEARCH
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    networks:
+      - anet
+    environment:
+      - cluster.name=escluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 131072
+        hard: 131072
+      nproc:
+        soft: 8192
+        hard: 8192
+    volumes:
+      - ${PWD}/es-data:/usr/share/elasticsearch/data
+  # END: ELASTICSEARCH
+
+  # BEGIN: mysql
+  mysql:
+    image: "mysql:5.7"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=xpertfinder
+      - MYSQL_USER=xpertfinder
+      - MYSQL_PORT=3306
+      - MYSQL_PASSWORD=xpertfinder
+    volumes:
+      - ${PWD}/mysql-data:/var/lib/mysql
+      - ${PWD}/mysql-config:/etc/mysql/conf.d
+    command: ["--character-set-server=utf8mb4", "--character-set-client-handshake=FALSE", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pxpertfinder", "-uxpertfinder"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+    networks:
+      - anet
+  # END: mysql
+
+  # BEGIN: phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - MYSQL_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+     - 10301:80
+    networks:
+     - anet
+   # END: phpmyadmin
+
+  # BEGIN: ltxpertfinder
+  server:
+    image: uhhlt/xpertfinder
+    environment:
+      - server.contextPath=/xpertfinder
+      - spring.datasource.url=jdbc:mysql://mysql:3306/xpertfinder
+      - spring.datasource.username=xpertfinder
+      - spring.datasource.password=xpertfinder
+      - elastichostname=elasticsearch
+      - elasticport=9200
+    ports:
+     - 10300:8080
+    networks:
+     - anet
+  # END: ltxpertfinder
