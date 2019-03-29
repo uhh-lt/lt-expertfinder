@@ -1,5 +1,6 @@
 import json,sys,io,os,re
 from pprint import pprint
+from argparse import ArgumentParser
 import mysql.connector
 
 mydb = mysql.connector.connect(
@@ -56,9 +57,16 @@ def addCollaboration(author1, author2):
 	
 	
 def main():
-	citations = os.path.normpath("./release/2014/networks/paper-citation-network.txt")
-	metadata = os.path.normpath("./release/2014/metadata.txt")
+	parser = ArgumentParser()
+	parser.add_argument("-a", "--aan", dest="aan", help="path to AAN", metavar="AAN")
 	
+	args = parser.parse_args()
+	
+	aan_path = os.path.normpath(args.aan);
+	citations = os.path.normpath("release/2014/networks/paper-citation-network.txt")
+	metadata = os.path.normpath("release/2014/acl-metadata.txt")
+	citations_path = os.path.normpath(aan_path+"/"+citations);
+	metadata_path = os.path.normpath(aan_path+"/"+metadata);
 	
 	id = ""
 	author = ""
@@ -66,7 +74,7 @@ def main():
 	venue = "";
 	year = 0;
 	
-	with io.open(metadata, 'r', encoding="UTF-8") as file:
+	with io.open(metadata_path, 'r', encoding="UTF-8") as file:
 		for line in file:
 					
 			matchEmpty = re.match(r'^\s*$', line);
@@ -113,12 +121,12 @@ def main():
 						title = value
 				
 	
-	with io.open(citations, 'r', encoding="utf8") as file:
+	with io.open(citations_path, 'r', encoding="utf8") as file:
 		for line in file:
 			outgoing, incoming = line.split(" ==> ");
 			print("Inserting Citation: "+outgoing.strip()+" ==> "+incoming.strip())
 			addCitation(outgoing.strip(), incoming.strip())
-
+	
 
 if __name__ == "__main__":
 	main()

@@ -1,13 +1,21 @@
 import json,sys,io,os
-from pprint import pprint
 from argparse import ArgumentParser
 from elasticsearch import Elasticsearch
+from argparse import ArgumentParser
 
 def main():
-	es = Elasticsearch(['localhost'], port=9200)
-	path = "papers_text"
+	parser = ArgumentParser()
+	parser.add_argument("-a", "--aan", dest="aan", help="path to AAN", metavar="AAN")
 	
-	for entry in os.scandir(path): 
+	args = parser.parse_args()
+	
+	aan_path = os.path.normpath(args.aan);
+	papers = "papers_text"
+	papers_path = os.path.normpath(aan_path+"/"+papers);
+
+	es = Elasticsearch(['localhost'], port=9200)
+	
+	for entry in os.scandir(papers_path): 
 		filepath = entry.path
 		filename = entry.name
 		if filename.endswith(".txt"): 
