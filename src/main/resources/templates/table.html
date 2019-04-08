@@ -34,14 +34,10 @@
     <table  th:if="${result != null && result.get(0) != null}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
         <tr class="w3-theme">
             <th>#</th>
-            <th>Global Citations</th>
-            <!--<th>Elastic</th>-->
-            <th>Model 2</th>
-            <!--<th>k-step</th>-->
-            <!--<th>infinite</th>-->
-            <th>Relevance Propagation</th>
-            <th>Weighted Relevance Propagation</th>
-            <!--<th>pagerank</th>-->
+            <th th:text="${method1name}"></th>
+            <th th:text="${method2name}"></th>
+            <th th:text="${method3name}"></th>
+            <th th:text="${method4name}"></th>
         </tr>
         <tr th:each="i : ${#numbers.sequence( 0, result.get(0).size() - 1)}">
             <td th:text="${i + 1}"></td>

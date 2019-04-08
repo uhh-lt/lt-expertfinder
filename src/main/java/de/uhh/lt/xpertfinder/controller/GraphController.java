@@ -3,11 +3,14 @@ package de.uhh.lt.xpertfinder.controller;
 import de.uhh.lt.xpertfinder.finder.DocumentResult;
 import de.uhh.lt.xpertfinder.finder.ExpertQuery;
 import de.uhh.lt.xpertfinder.finder.ExpertRetrievalResult;
+import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
 import de.uhh.lt.xpertfinder.model.graph.Function2;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.model.graph.Collaboration;
 import de.uhh.lt.xpertfinder.service.ExpertRetrieval;
 import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.service.MethodService;
+import de.uhh.lt.xpertfinder.service.NewExpertRetrieval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,12 @@ public class GraphController extends SessionController {
     @Autowired
     private ExpertRetrieval expertRetrieval;
 
+    @Autowired
+    private NewExpertRetrieval newExpertRetrieval;
+
+    @Autowired
+    private MethodService methodService;
+
     @GetMapping(value = "/graph")
     public String testcontroller2(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, BindingResult errors, Model model) {
 
@@ -40,6 +49,7 @@ public class GraphController extends SessionController {
             System.out.println("not initialized!");
         }
 
+        model.addAttribute("expertfindingmethods", methodService.getAllExpertFindingMethods());
         return "graph";
     }
 
@@ -54,7 +64,10 @@ public class GraphController extends SessionController {
 
         // find the experts with the selected method
         ExpertRetrievalResult expertRetrievalResult;
-        if(Integer.parseInt(expertQuery.getMethod()) < 6) {
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
+        if(method != null) {
+            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
+        } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
             expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
         } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {
             expertRetrievalResult = expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());

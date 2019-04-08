@@ -3,13 +3,12 @@ package de.uhh.lt.xpertfinder.controller;
 import de.uhh.lt.xpertfinder.dao.GoogleDao;
 import de.uhh.lt.xpertfinder.dao.KeywordDao;
 import de.uhh.lt.xpertfinder.finder.*;
+import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.model.profiles.aan.Author;
 import de.uhh.lt.xpertfinder.model.profiles.scholar.GoogleScholarAuthor;
 import de.uhh.lt.xpertfinder.model.graph.Collaboration;
-import de.uhh.lt.xpertfinder.service.ExpertRetrieval;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
-import de.uhh.lt.xpertfinder.service.StatisticService;
+import de.uhh.lt.xpertfinder.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,6 +35,9 @@ public class UIController extends SessionController {
     private ExpertRetrieval expertRetrieval;
 
     @Autowired
+    private NewExpertRetrieval newExpertRetrieval;
+
+    @Autowired
     private StatisticService statisticService;
 
     @Autowired
@@ -44,6 +45,9 @@ public class UIController extends SessionController {
 
     @Autowired
     private GoogleDao googleDao;
+
+    @Autowired
+    private MethodService methodService;
 
     @GetMapping("/ui")
     public String ui(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, BindingResult errors, Model model) {
@@ -53,6 +57,7 @@ public class UIController extends SessionController {
             System.out.println("not initialized!");
         }
 
+        model.addAttribute("expertfindingmethods", methodService.getAllExpertFindingMethods());
         return "ui";
     }
 
@@ -73,7 +78,11 @@ public class UIController extends SessionController {
 
         // find the experts with the selected method
         ExpertRetrievalResult expertRetrievalResult;
-        if(Integer.parseInt(expertQuery.getMethod()) < 6) {
+
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
+        if(method != null) {
+            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
+        } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
             expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
         } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {
             expertRetrievalResult = expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());
