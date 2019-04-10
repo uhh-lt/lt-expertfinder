@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class LocalHIndexMethod implements ExpertFindingMethod {
+public class LocalHIndexMethod implements ExpertFindingMethod<DefaultRequest> {
 
     private static Logger logger = LoggerFactory.getLogger(LocalHIndexMethod.class);
 
@@ -41,7 +41,12 @@ public class LocalHIndexMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public DefaultRequest getRequestObject() {
+        return new DefaultRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(DefaultRequest request, ExpertTopic expertTopic) {
         Graph graph = expertTopic.getGraph();
         Map<String, Integer> hindex = expertTopic.getHindex();
 

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class Model2Method implements ExpertFindingMethod {
+public class Model2Method implements ExpertFindingMethod<DefaultRequest> {
     @Override
     public String getId() {
         return "model2";
@@ -37,7 +37,12 @@ public class Model2Method implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public DefaultRequest getRequestObject() {
+        return new DefaultRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(DefaultRequest request, ExpertTopic expertTopic) {
         Map<String, Double> authorRelevanceMap;
         Map<String, Double> documentRelevanceMap;
 

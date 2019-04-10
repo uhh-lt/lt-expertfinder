@@ -15,7 +15,46 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class PageRankMethod implements ExpertFindingMethod{
+public class PageRankMethod implements ExpertFindingMethod<PageRankMethod.PageRankRequest>{
+
+    public class PageRankRequest extends DefaultRequest {
+
+        private double lambda;
+        private double epsilon;
+
+        public PageRankRequest() {
+            super();
+        }
+
+        public PageRankRequest(double lambda, double epsilon) {
+            super();
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+        }
+
+        public PageRankRequest(int documents, int results, double lambda, double epsilon) {
+            super(documents, results);
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public void setLambda(double lambda) {
+            this.lambda = lambda;
+        }
+
+        public double getEpsilon() {
+            return epsilon;
+        }
+
+        public void setEpsilon(double epsilon) {
+            this.epsilon = epsilon;
+        }
+    }
+
     private static Logger logger = LoggerFactory.getLogger(PageRankMethod.class);
 
     @Override
@@ -44,7 +83,14 @@ public class PageRankMethod implements ExpertFindingMethod{
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public PageRankRequest getRequestObject() {
+        return new PageRankRequest(1000, 25, 0.5, 0.00000008);
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(PageRankRequest request, ExpertTopic expertTopic) {
+        double lambda = request.getLambda();
+        double epsilon = request.getEpsilon();
         Graph graph = expertTopic.getGraph();
         int maxIterations = 500;
 

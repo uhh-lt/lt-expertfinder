@@ -1,6 +1,7 @@
 package de.uhh.lt.xpertfinder.service;
 
-import de.uhh.lt.xpertfinder.controller.UIController;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.finder.ExpertRetrievalResult;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
@@ -19,7 +20,7 @@ public class NewExpertRetrieval {
 
     private static Logger logger = LoggerFactory.getLogger(NewExpertRetrieval.class);
 
-    public ExpertRetrievalResult findExperts(ExpertTopic expertTopic, String method, int k, double lambda, double epsilon, double md, double mca) {
+    public ExpertRetrievalResult findExperts(ExpertTopic expertTopic, String method, String params) {
         logger.debug("Start expert finding");
         long time = System.nanoTime();
 
@@ -29,7 +30,9 @@ public class NewExpertRetrieval {
             return null;
         }
 
-        ExpertFindingResult experts = expertFindingMethod.findExperts(k, lambda, epsilon, md, mca, expertTopic);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(params);
+        ExpertFindingResult experts = expertFindingMethod.findExperts(gson.fromJson(params, expertFindingMethod.getRequestObject().getClass()), expertTopic);
         if(experts == null) {
             logger.error("For some reason, the expert finding method " + expertFindingMethod.getName() + "was not able to find experts...");
             return null;

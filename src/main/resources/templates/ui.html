@@ -161,6 +161,22 @@
     <script th:replace="fragments/general :: scrollscript"></script>
 
     <script>
+        var onMethodChange = function () {
+            Array.from(document.getElementsByTagName("textarea")).forEach(ta => {
+                ta.style.display = "none";
+            });
+            var value = document.getElementById("methodselect").value;
+            var textarea = document.getElementById(value);
+            if(textarea !== null) {
+                textarea.style.display = "block";
+            }
+        };
+        onMethodChange();
+
+        var select = document.getElementById("methodselect");
+        select.addEventListener("change", onMethodChange);
+    </script>
+    <script>
         function openTab(evt, tabName) {
             var i, x, tablinks;
             x = document.getElementsByClassName("tab");

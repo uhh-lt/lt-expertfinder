@@ -13,7 +13,71 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class InfiniteRandomFullMethod implements ExpertFindingMethod {
+public class InfiniteRandomFullMethod implements ExpertFindingMethod<InfiniteRandomFullMethod.InfiniteRandomFullRequest> {
+
+    public class InfiniteRandomFullRequest extends DefaultRequest {
+        private double lambda;
+        private double epsilon;
+        private double md;
+        private double mca;
+
+        public InfiniteRandomFullRequest() {
+            super();
+            this.lambda = 0.5;
+            this.epsilon = 0.00000008;
+            this.md = 0.5;
+            this.mca = 0.25;
+        }
+
+        public InfiniteRandomFullRequest(double lambda, double epsilon, double md, double mca) {
+            super();
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+            this.md = md;
+            this.mca = mca;
+        }
+
+        public InfiniteRandomFullRequest(int documents, int results, double lambda, double epsilon, double md, double mca) {
+            super(documents, results);
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+            this.md = md;
+            this.mca = mca;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public void setLambda(double lambda) {
+            this.lambda = lambda;
+        }
+
+        public double getEpsilon() {
+            return epsilon;
+        }
+
+        public void setEpsilon(double epsilon) {
+            this.epsilon = epsilon;
+        }
+
+        public double getMd() {
+            return md;
+        }
+
+        public void setMd(double md) {
+            this.md = md;
+        }
+
+        public double getMca() {
+            return mca;
+        }
+
+        public void setMca(double mca) {
+            this.mca = mca;
+        }
+    }
+
     private static Logger logger = LoggerFactory.getLogger(InfiniteRandomFullMethod.class);
 
     @Override
@@ -42,7 +106,16 @@ public class InfiniteRandomFullMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public InfiniteRandomFullRequest getRequestObject() {
+        return null;
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(InfiniteRandomFullRequest request, ExpertTopic expertTopic) {
+        double lambda = request.getLambda();
+        double epsilon = request.getEpsilon();
+        double md = request.getMd();
+        double mca = request.getMca();
         Graph graph = expertTopic.getGraph();
         Map<String, Double> documentRelevance = expertTopic.getDocumentRelevance();
 

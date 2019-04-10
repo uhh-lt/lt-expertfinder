@@ -12,7 +12,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class KStepMethod implements ExpertFindingMethod {
+public class KStepMethod implements ExpertFindingMethod<KStepMethod.KStepRequest> {
+
+    public class KStepRequest extends DefaultRequest {
+        private int k;
+
+        public KStepRequest() {
+            super();
+            this.k = 10;
+        }
+
+        public KStepRequest(int k) {
+            super();
+            this.k = k;
+        }
+
+        public KStepRequest(int documents, int results, int k) {
+            super(documents, results);
+            this.k = k;
+        }
+
+        public int getK() {
+            return k;
+        }
+
+        public void setK(int k) {
+            this.k = k;
+        }
+    }
+
     private static Logger logger = LoggerFactory.getLogger(KStepMethod.class);
 
     @Override
@@ -41,7 +69,13 @@ public class KStepMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public KStepRequest getRequestObject() {
+        return new KStepRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(KStepRequest request, ExpertTopic expertTopic) {
+        int k = request.getK();
         Graph graph = expertTopic.getGraph();
         Map<String, Double> documentRelevance = expertTopic.getDocumentRelevance();
 

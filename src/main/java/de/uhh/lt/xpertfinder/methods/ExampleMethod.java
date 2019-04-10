@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ExampleMethod implements ExpertFindingMethod {
+public class ExampleMethod implements ExpertFindingMethod<DefaultRequest> {
 
     private static Logger logger = LoggerFactory.getLogger(ExampleMethod.class);
 
@@ -53,7 +53,12 @@ public class ExampleMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public DefaultRequest getRequestObject() {
+        return new DefaultRequest(1000, 25);
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(DefaultRequest request, ExpertTopic expertTopic) {
         // These are the most important information you will need to determine who is an expert
         Graph graph = expertTopic.getGraph();
         Map<String, Double> documentRelevance = expertTopic.getDocumentRelevance();

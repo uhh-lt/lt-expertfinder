@@ -3,6 +3,7 @@ package de.uhh.lt.xpertfinder.finder;
 import de.uhh.lt.xpertfinder.model.graph.GraphOptions;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class ExpertQuery implements Serializable {
 
@@ -19,6 +20,9 @@ public class ExpertQuery implements Serializable {
     private String method2;
     private String method3;
     private String method4;
+    private String params;
+    private Map<String,String> methodParamMap;
+    private Map<String,Integer> methodParamLengthMap;
 
     private boolean advanced;
 
@@ -154,5 +158,29 @@ public class ExpertQuery implements Serializable {
 
     public void setMethod4(String method4) {
         this.method4 = method4;
+    }
+
+    public void setParams(String newParams) {
+        this.params = newParams;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public Map<String, String> getMethodParamMap() {
+        return methodParamMap;
+    }
+
+    public void setMethodParamMap(Map<String,String> methodParamMap) {
+        this.methodParamMap = methodParamMap;
+    }
+
+    public void setMethodParamLengthMap(Map<String,Integer> methodParamLengthMap) {
+        this.methodParamLengthMap = methodParamLengthMap;
+    }
+
+    public Map<String, Integer> getMethodParamLengthMap() {
+        return methodParamLengthMap;
     }
 }

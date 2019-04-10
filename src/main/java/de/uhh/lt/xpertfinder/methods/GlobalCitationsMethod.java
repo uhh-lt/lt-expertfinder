@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GlobalCitationsMethod implements ExpertFindingMethod {
+public class GlobalCitationsMethod implements ExpertFindingMethod<DefaultRequest> {
 
     private static Logger logger = LoggerFactory.getLogger(GlobalCitationsMethod.class);
 
@@ -53,7 +53,12 @@ public class GlobalCitationsMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public DefaultRequest getRequestObject() {
+        return new DefaultRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(DefaultRequest request, ExpertTopic expertTopic) {
         Graph graph = expertTopic.getGraph();
 
         Map<String, Double> authorRelevanceMap = new HashMap<>();

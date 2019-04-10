@@ -63,10 +63,10 @@ public class GraphController extends SessionController {
         long time = System.nanoTime();
 
         // find the experts with the selected method
-        ExpertRetrievalResult expertRetrievalResult;
+        ExpertRetrievalResult expertRetrievalResult = null;
         ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
         if(method != null) {
-            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
+//            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
         } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
             expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
         } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {

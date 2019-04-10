@@ -15,7 +15,66 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class InfiniteRandomWeightedMethod implements ExpertFindingMethod {
+public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<InfiniteRandomWeightedMethod.InfiniteRandomWeightedRequest> {
+
+    public class InfiniteRandomWeightedRequest extends DefaultRequest {
+        private double lambda;
+        private double epsilon;
+        private double md;
+        private double mca;
+
+        public InfiniteRandomWeightedRequest() {
+        }
+
+        public InfiniteRandomWeightedRequest(double lambda, double epsilon, double md, double mca) {
+            super();
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+            this.md = md;
+            this.mca = mca;
+        }
+
+        public InfiniteRandomWeightedRequest(int documents, int results, double lambda, double epsilon, double md, double mca) {
+            super(documents, results);
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+            this.md = md;
+            this.mca = mca;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public void setLambda(double lambda) {
+            this.lambda = lambda;
+        }
+
+        public double getEpsilon() {
+            return epsilon;
+        }
+
+        public void setEpsilon(double epsilon) {
+            this.epsilon = epsilon;
+        }
+
+        public double getMd() {
+            return md;
+        }
+
+        public void setMd(double md) {
+            this.md = md;
+        }
+
+        public double getMca() {
+            return mca;
+        }
+
+        public void setMca(double mca) {
+            this.mca = mca;
+        }
+    }
+    
     private static Logger logger = LoggerFactory.getLogger(InfiniteRandomWeightedMethod.class);
 
     private Graph graph;
@@ -47,7 +106,16 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public InfiniteRandomWeightedRequest getRequestObject() {
+        return new InfiniteRandomWeightedRequest(1000, 25, 0.1, 0.00000008, 0.5, 0.25);
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(InfiniteRandomWeightedRequest request, ExpertTopic expertTopic) {
+        double lambda = request.getLambda();
+        double epsilon = request.getEpsilon();
+        double md = request.getMd();
+        double mca = request.getMca();
         graph = expertTopic.getGraph();
         documentRelevance = expertTopic.getDocumentRelevance();
 

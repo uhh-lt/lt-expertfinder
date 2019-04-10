@@ -1,5 +1,7 @@
 package de.uhh.lt.xpertfinder.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.uhh.lt.xpertfinder.dao.GoogleDao;
 import de.uhh.lt.xpertfinder.dao.KeywordDao;
 import de.uhh.lt.xpertfinder.finder.*;
@@ -49,6 +51,8 @@ public class UIController extends SessionController {
     @Autowired
     private MethodService methodService;
 
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     @GetMapping("/ui")
     public String ui(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, BindingResult errors, Model model) {
         if(expertTopic.isInitialized()) {
@@ -58,6 +62,10 @@ public class UIController extends SessionController {
         }
 
         model.addAttribute("expertfindingmethods", methodService.getAllExpertFindingMethods());
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
+        if(method != null) {
+            expertQuery.setParams(gson.toJson(method.getRequestObject()));
+        }
         return "ui";
     }
 
@@ -81,7 +89,7 @@ public class UIController extends SessionController {
 
         ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
         if(method != null) {
-            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
+            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getMethodParamMap().get(expertQuery.getMethod()));
         } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
             expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
         } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {

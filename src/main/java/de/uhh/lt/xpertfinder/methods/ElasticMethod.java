@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ElasticMethod implements ExpertFindingMethod {
+public class ElasticMethod implements ExpertFindingMethod<DefaultRequest> {
 
     @Autowired
     ElasticSearchService elasticSearch;
@@ -43,7 +43,12 @@ public class ElasticMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public DefaultRequest getRequestObject() {
+        return new DefaultRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(DefaultRequest request, ExpertTopic expertTopic) {
         Map<String, Double> authorRelevanceMap;
         Map<String, Double> documentRelevanceMap;
 

@@ -13,7 +13,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class InfiniteRandomMethod implements ExpertFindingMethod {
+public class InfiniteRandomMethod implements ExpertFindingMethod<InfiniteRandomMethod.InfiniteRandomRequest> {
+
+    public class InfiniteRandomRequest extends DefaultRequest {
+        private double lambda;
+        private double epsilon;
+
+        public InfiniteRandomRequest() {
+            super();
+            this.lambda = 0.5;
+            this.epsilon = 0.00000008;
+        }
+
+        public InfiniteRandomRequest(double lambda, double epsilon) {
+            super();
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+        }
+
+        public InfiniteRandomRequest(int documents, int results, double lambda, double epsilon) {
+            super(documents, results);
+            this.lambda = lambda;
+            this.epsilon = epsilon;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public void setLambda(double lambda) {
+            this.lambda = lambda;
+        }
+
+        public double getEpsilon() {
+            return epsilon;
+        }
+
+        public void setEpsilon(double epsilon) {
+            this.epsilon = epsilon;
+        }
+    }
 
     private static Logger logger = LoggerFactory.getLogger(InfiniteRandomMethod.class);
 
@@ -43,7 +82,14 @@ public class InfiniteRandomMethod implements ExpertFindingMethod {
     }
 
     @Override
-    public ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic) {
+    public InfiniteRandomRequest getRequestObject() {
+        return new InfiniteRandomRequest();
+    }
+
+    @Override
+    public ExpertFindingResult findExperts(InfiniteRandomRequest request, ExpertTopic expertTopic) {
+        double lambda = request.getLambda();
+        double epsilon = request.getEpsilon();
         Graph graph = expertTopic.getGraph();
         Map<String, Double> documentRelevance = expertTopic.getDocumentRelevance();
 

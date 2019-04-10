@@ -5,8 +5,8 @@ import de.uhh.lt.xpertfinder.finder.ExpertQuery;
 import de.uhh.lt.xpertfinder.finder.ExpertResult;
 import de.uhh.lt.xpertfinder.finder.ExpertRetrievalResult;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
-import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.model.graph.Collaboration;
+import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class TableController extends SessionController {
 
         ExpertFindingMethod method = methodService.getExpertFindingMethodById(eq.getMethod1());
         if(method != null) {
-            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod1(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
+//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod1(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if(Integer.parseInt(eq.getMethod1()) < 6) {
             results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod1()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if (Integer.parseInt(eq.getMethod1()) == 6) {
@@ -84,7 +83,7 @@ public class TableController extends SessionController {
 
         ExpertFindingMethod method2 = methodService.getExpertFindingMethodById(eq.getMethod2());
         if(method2 != null) {
-            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod2(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
+//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod2(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if(Integer.parseInt(eq.getMethod2()) < 6) {
             results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod2()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if (Integer.parseInt(eq.getMethod2()) == 6) {
@@ -95,7 +94,7 @@ public class TableController extends SessionController {
 
         ExpertFindingMethod method3 = methodService.getExpertFindingMethodById(eq.getMethod3());
         if(method3 != null) {
-            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod3(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
+//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod3(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if(Integer.parseInt(eq.getMethod3()) < 6) {
             results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod3()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if (Integer.parseInt(eq.getMethod3()) == 6) {
@@ -106,7 +105,7 @@ public class TableController extends SessionController {
 
         ExpertFindingMethod method4 = methodService.getExpertFindingMethodById(eq.getMethod4());
         if(method4 != null) {
-            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod4(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
+//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod4(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if(Integer.parseInt(eq.getMethod4()) < 6) {
             results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod4()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
         } else if (Integer.parseInt(eq.getMethod4()) == 6) {

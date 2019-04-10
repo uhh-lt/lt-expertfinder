@@ -3,7 +3,7 @@ package de.uhh.lt.xpertfinder.methods;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.service.ExpertTopic;
 
-public interface ExpertFindingMethod {
+public interface ExpertFindingMethod<T extends DefaultRequest> {
 
     String getId();
     String getName();
@@ -11,5 +11,6 @@ public interface ExpertFindingMethod {
     boolean needsCitations();
     boolean needsPublications();
 
-    ExpertFindingResult findExperts(int k, double lambda, double epsilon, double md, double mca, ExpertTopic expertTopic);
+    T getRequestObject();
+    ExpertFindingResult findExperts(T request, ExpertTopic expertTopic);
 }
