@@ -5,6 +5,7 @@ function getElementY(query) {
 function doScrolling(element, duration) {
     var startingY = window.pageYOffset
     var elementY = getElementY(element) - 51
+    console.log(elementY)
     // If element is close to page's bottom then window will scroll only to some position above the element.
     var targetY = document.body.scrollHeight - elementY < window.innerHeight ? document.body.scrollHeight - window.innerHeight : elementY
     var diff = targetY - startingY

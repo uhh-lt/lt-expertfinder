@@ -4,7 +4,7 @@ import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Authorship;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.service.ElasticSearchService;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +44,7 @@ public class ElasticMethod implements ExpertFindingMethod<DefaultRequest> {
 
     @Override
     public DefaultRequest getRequestObject() {
-        return new DefaultRequest();
+        return new DefaultRequest(1000, 25);
     }
 
     @Override

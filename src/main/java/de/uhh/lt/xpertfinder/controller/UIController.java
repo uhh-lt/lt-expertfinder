@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import de.uhh.lt.xpertfinder.dao.GoogleDao;
 import de.uhh.lt.xpertfinder.dao.KeywordDao;
 import de.uhh.lt.xpertfinder.finder.*;
+import de.uhh.lt.xpertfinder.methods.DefaultRequest;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.model.profiles.aan.Author;
@@ -37,9 +38,6 @@ public class UIController extends SessionController {
     private ExpertRetrieval expertRetrieval;
 
     @Autowired
-    private NewExpertRetrieval newExpertRetrieval;
-
-    @Autowired
     private StatisticService statisticService;
 
     @Autowired
@@ -62,10 +60,6 @@ public class UIController extends SessionController {
         }
 
         model.addAttribute("expertfindingmethods", methodService.getAllExpertFindingMethods());
-        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
-        if(method != null) {
-            expertQuery.setParams(gson.toJson(method.getRequestObject()));
-        }
         return "ui";
     }
 
@@ -86,17 +80,13 @@ public class UIController extends SessionController {
 
         // find the experts with the selected method
         ExpertRetrievalResult expertRetrievalResult;
-
-        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
-        if(method != null) {
-            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getMethodParamMap().get(expertQuery.getMethod()));
-        } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
-            expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
-        } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {
-            expertRetrievalResult = expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());
-        } else {
-            expertRetrievalResult = expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]);
+        if(method == null) {
+            logger.debug("ERROR: Method does not exist!");
+            return;
         }
+        DefaultRequest defaultRequest = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), method.getRequestObject().getClass());
+        expertRetrievalResult = expertRetrieval.findExperts(expertTopic, expertQuery.getMethod()[0], defaultRequest);
 
         Graph graph = expertTopic.getGraph();
 
@@ -107,8 +97,8 @@ public class UIController extends SessionController {
         System.out.println("Document Results:" + expertRetrievalResult.getDocumentResultList().size());
 
         // feed results with additional information
-        List<DocumentResult> documentResults = createDocumentResult(expertRetrievalResult.getDocumentResultList(), expertQuery.getResultCount());
-        List<ExpertResult> expertResults = createExpertResult(expertRetrievalResult.getExpertResultList(), expertRetrievalResult.getDocumentResultList(), expertQuery.getResultCount(), graph);
+        List<DocumentResult> documentResults = createDocumentResult(expertRetrievalResult.getDocumentResultList(), defaultRequest.getResults());
+        List<ExpertResult> expertResults = createExpertResult(expertRetrievalResult.getExpertResultList(), expertRetrievalResult.getDocumentResultList(), defaultRequest.getResults(), graph);
 
         // add experts and documents to the view
         model.addAttribute("result", expertResults);

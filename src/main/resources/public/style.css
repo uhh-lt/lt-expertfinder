@@ -70,11 +70,12 @@ text.shadow {
 
 .mytable {
     width: 100%;
-    border-spacing: 0px;
+    border-spacing: 0px 16px;
 }
 
 .mytable td {
     width: 50%;
+    vertical-align: top;
 }
 
 .mytable td:first-child {

@@ -3,7 +3,7 @@ package de.uhh.lt.xpertfinder.methods;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Authorship;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class Model2Method implements ExpertFindingMethod<DefaultRequest> {
 
     @Override
     public DefaultRequest getRequestObject() {
-        return new DefaultRequest();
+        return new DefaultRequest(1000, 25);
     }
 
     @Override

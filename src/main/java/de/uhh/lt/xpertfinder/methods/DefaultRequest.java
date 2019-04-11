@@ -6,8 +6,6 @@ public class DefaultRequest {
     private int results;
 
     public DefaultRequest() {
-        this.documents = 1000;
-        this.results = 25;
     }
 
     public DefaultRequest(int documents, int results) {

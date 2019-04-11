@@ -1,7 +1,7 @@
 package de.uhh.lt.xpertfinder.methods;
 
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 
 public interface ExpertFindingMethod<T extends DefaultRequest> {
 

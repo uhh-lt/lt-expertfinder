@@ -1,9 +1,11 @@
 package de.uhh.lt.xpertfinder.controller;
 
+import com.google.gson.Gson;
 import de.uhh.lt.xpertfinder.dao.AanDao;
 import de.uhh.lt.xpertfinder.finder.ExpertQuery;
+import de.uhh.lt.xpertfinder.methods.DefaultRequest;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.service.MethodService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,32 +64,17 @@ public class SearchController extends SessionController {
         logger.debug("Start creating TOPIC");
         long time = System.nanoTime();
 
-        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]);
         if(method != null) {
             expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-            expertTopic.setup(expertQuery.getTopic(), expertQuery.getTopDocCount(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
+            Gson gson = new Gson();
+            DefaultRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), DefaultRequest.class);
+            expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
+            logger.debug("Finished creating TOPIC after " + (System.nanoTime() - time) + " nanoseconds");
         } else {
-            switch (Integer.parseInt(expertQuery.getMethod())) {
-                case 2:
-                case 4:
-                case 5:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
-                    expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-                    expertTopic.setup(expertQuery.getTopic(), expertQuery.getTopDocCount(), true, true, true, expertQuery.getOptions());
-                    break;
-                case 0:
-                case 1:
-                case 3:
-                case 6:
-                    expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-                    expertTopic.setup(expertQuery.getTopic(), expertQuery.getTopDocCount(), true, false, false, expertQuery.getOptions());
-                    break;
-            }
+            logger.debug("FAILED creating TOPIC: Method is unknown!");
         }
-        logger.debug("Finished creating TOPIC after " + (System.nanoTime() - time) + " nanoseconds");
+
         return expertTopic;
     }
 }

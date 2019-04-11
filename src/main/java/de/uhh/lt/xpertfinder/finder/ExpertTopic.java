@@ -1,10 +1,12 @@
-package de.uhh.lt.xpertfinder.service;
+package de.uhh.lt.xpertfinder.finder;
 
 import com.google.gson.Gson;
 import de.uhh.lt.xpertfinder.dao.AanDao;
-import de.uhh.lt.xpertfinder.finder.CorpusStatistic;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.model.graph.GraphOptions;
+import de.uhh.lt.xpertfinder.service.ElasticSearchService;
+import de.uhh.lt.xpertfinder.service.HindexService;
+import de.uhh.lt.xpertfinder.service.RestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

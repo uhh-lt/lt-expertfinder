@@ -3,7 +3,7 @@ package de.uhh.lt.xpertfinder.methods;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Authorship;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.utils.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,6 @@ public class InfiniteRandomMethod implements ExpertFindingMethod<InfiniteRandomM
         private double epsilon;
 
         public InfiniteRandomRequest() {
-            super();
-            this.lambda = 0.5;
-            this.epsilon = 0.00000008;
         }
 
         public InfiniteRandomRequest(double lambda, double epsilon) {
@@ -83,7 +80,7 @@ public class InfiniteRandomMethod implements ExpertFindingMethod<InfiniteRandomM
 
     @Override
     public InfiniteRandomRequest getRequestObject() {
-        return new InfiniteRandomRequest();
+        return new InfiniteRandomRequest(1000, 25, 0.5, 0.00000008);
     }
 
     @Override

@@ -15,145 +15,18 @@
                         <!--<label class="w3-text-theme"><b>Topic</b></label>-->
                         <input th:field="*{topic}" class="w3-input w3-border" type="text"></p>
                     <div id="advancedsearch" th:styleappend="*{advanced} ? 'display:block' : 'display:none'">
-                        <textarea th:each="methodInfo : *{methodParamMap}" th:id="${methodInfo.key}" th:field="*{methodParamMap[__${methodInfo.key}__]}" th:rows="*{methodParamLengthMap[__${methodInfo.key}__]}" style="display:none; resize:none;"></textarea>
                         <table class="mytable">
-                            <tr>
+
+                            <tr th:each="methodMap,methodNumber : *{methodParamMap}" th:styleappend="${(showMethod && methodNumber.index == 0) || !showMethod } ? '' : 'display:none'">
                                 <td>
-                                    <label class="w3-text-theme"><b># documents</b></label>
-                                    <input th:field="*{topDocCount}" class="w3-input w3-border" type="number" step="100.0">
-                                </td>
-                                <td>
-                                    <label class="w3-text-theme"><b># results</b></label>
-                                    <input th:field="*{resultCount}" class="w3-input w3-border" type="number" step="1.0">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="w3-text-theme"><b>K</b></label>
-                                    <input th:field="*{k}" class="w3-input w3-border" type="number" step="1.0">
-                                </td>
-                                <td>
-                                    <label class="w3-text-theme"><b>Lambda</b></label>
-                                    <input th:field="*{lambda}" class="w3-input w3-border" type="number" step="0.1">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="w3-text-theme"><b>Epsilon</b></label>
-                                    <input th:field="*{epsilon}" class="w3-input w3-border" type="number" step="0.00000001">
-                                </td>
-                                <td>
-                                    <label class="w3-text-theme"><b>Md</b></label>
-                                    <input th:field="*{md}" class="w3-input w3-border" type="number" step="0.05">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="w3-text-theme"><b>Mca</b></label>
-                                    <input th:field="*{mca}" class="w3-input w3-border" type="number" step="0.05">
-                                </td>
-                                <td th:styleappend="${showMethod} ? '' : 'display:none'">
-                                    <label class="w3-text-theme"><b>Method</b></label>
-                                    <select id="methodselect" th:field="*{method}" class="w3-select w3-border" style="background:white" name="option">
-                                        <option th:each="efmethod : ${expertfindingmethods}" th:value="${efmethod.getId()}" th:text="${efmethod.getName()}"></option>
-                                        <option value="6">Elastic</option>
-                                        <option value="3">Model 2</option>
-                                        <option value="0">K-Step</option>
-                                        <option value="1">Infinite Random Walk</option>
-                                        <option value="2">Infinite Random Walk - Full Graph</option>
-                                        <option value="4">Infinite Random Walk - Weighted Full Graph</option>
-                                        <option value="5">Page Rank</option>
-                                        <option value="7">local h-index</option>
-                                        <option value="8">global h-index</option>
-                                        <option value="9">local citations</option>
-                                        <option value="10">global citations</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr th:styleappend="${showMethod} ? 'display:none' : ''">
-                                <td>
-                                    <label class="w3-text-theme"><b>Method 1</b></label>
-                                    <select th:field="*{method1}" class="w3-select w3-border" style="background:white" name="option">
-                                        <option th:each="efmethod : ${expertfindingmethods}" th:value="${efmethod.getId()}" th:text="${efmethod.getName()}"></option>
-                                        <option value="6">Elastic</option>
-                                        <option value="3">Model 2</option>
-                                        <option value="0">K-Step</option>
-                                        <option value="1">Infinite Random Walk</option>
-                                        <option value="2">Infinite Random Walk - Full Graph</option>
-                                        <option value="4">Infinite Random Walk - Weighted Full Graph</option>
-                                        <option value="5">Page Rank</option>
-                                        <option value="7">local h-index</option>
-                                        <option value="8">global h-index</option>
-                                        <option value="9">local citations</option>
-                                        <option value="10">global citations</option>
+                                    <label class="w3-text-theme" th:inline="text"><b>[[${'Method '+methodNumber.index}]]</b></label>
+                                    <select th:id="'methodselect'+${methodNumber.index}" th:method="${methodNumber.index}" th:field="*{method[__${methodNumber.index}__]}" class="w3-select w3-border" style="background:white" name="option">
+                                        <option th:each="entry : ${methodMap}" th:value="${entry.key}" th:text="${entry.key}"></option>
                                     </select>
                                 </td>
                                 <td>
-                                    <label class="w3-text-theme"><b>Method 2</b></label>
-                                    <select th:field="*{method2}" class="w3-select w3-border" style="background:white" name="option">
-                                        <option th:each="efmethod : ${expertfindingmethods}" th:value="${efmethod.getId()}" th:text="${efmethod.getName()}"></option>
-                                        <option value="6">Elastic</option>
-                                        <option value="3">Model 2</option>
-                                        <option value="0">K-Step</option>
-                                        <option value="1">Infinite Random Walk</option>
-                                        <option value="2">Infinite Random Walk - Full Graph</option>
-                                        <option value="4">Infinite Random Walk - Weighted Full Graph</option>
-                                        <option value="5">Page Rank</option>
-                                        <option value="7">local h-index</option>
-                                        <option value="8">global h-index</option>
-                                        <option value="9">local citations</option>
-                                        <option value="10">global citations</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr th:styleappend="${showMethod} ? 'display:none' : ''">
-                                <td>
-                                    <label class="w3-text-theme"><b>Method 3</b></label>
-                                    <select th:field="*{method3}" class="w3-select w3-border" style="background:white" name="option">
-                                        <option th:each="efmethod : ${expertfindingmethods}" th:value="${efmethod.getId()}" th:text="${efmethod.getName()}"></option>
-                                        <option value="6">Elastic</option>
-                                        <option value="3">Model 2</option>
-                                        <option value="0">K-Step</option>
-                                        <option value="1">Infinite Random Walk</option>
-                                        <option value="2">Infinite Random Walk - Full Graph</option>
-                                        <option value="4">Infinite Random Walk - Weighted Full Graph</option>
-                                        <option value="5">Page Rank</option>
-                                        <option value="7">local h-index</option>
-                                        <option value="8">global h-index</option>
-                                        <option value="9">local citations</option>
-                                        <option value="10">global citations</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <label class="w3-text-theme"><b>Method 4</b></label>
-                                    <select th:field="*{method4}" class="w3-select w3-border" style="background:white" name="option">
-                                        <option th:each="efmethod : ${expertfindingmethods}" th:value="${efmethod.getId()}" th:text="${efmethod.getName()}"></option>
-                                        <option value="6">Elastic</option>
-                                        <option value="3">Model 2</option>
-                                        <option value="0">K-Step</option>
-                                        <option value="1">Infinite Random Walk</option>
-                                        <option value="2">Infinite Random Walk - Full Graph</option>
-                                        <option value="4">Infinite Random Walk - Weighted Full Graph</option>
-                                        <option value="5">Page Rank</option>
-                                        <option value="7">local h-index</option>
-                                        <option value="8">global h-index</option>
-                                        <option value="9">local citations</option>
-                                        <option value="10">global citations</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <input th:field="*{options.collaborationTF}" class="w3-check" type="checkbox">
-                                    <label>Col TF</label>
-                                    <input th:field="*{options.collaborationIDF}" class="w3-check" type="checkbox">
-                                    <label>Col IDF</label>
-                                    <input th:field="*{options.citationTF}" class="w3-check" type="checkbox">
-                                    <label>Cit TF</label>
-                                    <input th:field="*{options.citationIDF}" class="w3-check" type="checkbox">
-                                    <label>Cit IDF</label>
-                                    <input th:field="*{options.authorshipTF}" class="w3-check" type="checkbox">
-                                    <label>Aut TF</label>
+                                    <label class="w3-text-theme"><b>Parameter</b></label>
+                                    <textarea th:each="methodInfo : ${methodMap}" style="resize:none; width:100%;" th:rows="*{methodParamLengthMap[__${methodNumber.index}__][__${methodInfo.key}__]}" th:class="'ta-method'+${methodNumber.index}" th:id="'ta-method'+${methodNumber.index}+'-'+${methodInfo.key}" th:field="*{methodParamMap[__${methodNumber.index}__][__${methodInfo.key}__]}"></textarea>
                                 </td>
                             </tr>
                         </table>

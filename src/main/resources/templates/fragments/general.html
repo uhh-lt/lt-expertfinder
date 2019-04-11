@@ -247,5 +247,38 @@
         /*]]>*/
     </script>
 
+    <script th:fragment="multiplemethodsscript" th:inline="javascript">
+        /*<![CDATA[*/
+
+        var updateMethodTas = function (methodnumber) {
+            Array.from(document.getElementsByClassName("ta-method"+methodnumber)).forEach(ta => {
+                ta.style.display = "none";
+            });
+            var methodid = document.getElementById("methodselect"+methodnumber).value;
+            var textarea = document.getElementById("ta-method"+methodnumber+"-"+methodid);
+            if(textarea !== null) {
+                textarea.style.display = "block";
+            }
+        };
+
+        var onMethodChange = function (e) {
+            let methodnumber = e.target.getAttribute("method");
+            updateMethodTas(methodnumber);
+        };
+
+        var maps = /*[[${expertQuery.methodParamMap}]]*/ null;
+        let counter = 0;
+        maps.forEach(function (map) {
+
+            let methodSelector = document.getElementById("methodselect"+counter);
+            methodSelector.addEventListener("change", onMethodChange);
+
+            updateMethodTas(counter);
+
+            counter = counter +1;
+        });
+        /*]]>*/
+    </script>
+
 </body>
 </html>

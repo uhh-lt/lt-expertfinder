@@ -5,7 +5,7 @@ import de.uhh.lt.xpertfinder.model.graph.Authorship;
 import de.uhh.lt.xpertfinder.model.graph.Citation;
 import de.uhh.lt.xpertfinder.model.graph.Collaboration;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.utils.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

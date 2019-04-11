@@ -3,7 +3,7 @@ package de.uhh.lt.xpertfinder.methods;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Authorship;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,6 @@ public class KStepMethod implements ExpertFindingMethod<KStepMethod.KStepRequest
         private int k;
 
         public KStepRequest() {
-            super();
-            this.k = 10;
         }
 
         public KStepRequest(int k) {
@@ -70,7 +68,7 @@ public class KStepMethod implements ExpertFindingMethod<KStepMethod.KStepRequest
 
     @Override
     public KStepRequest getRequestObject() {
-        return new KStepRequest();
+        return new KStepRequest(1000, 25, 10);
     }
 
     @Override

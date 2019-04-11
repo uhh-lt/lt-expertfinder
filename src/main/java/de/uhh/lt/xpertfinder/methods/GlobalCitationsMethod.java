@@ -3,7 +3,7 @@ package de.uhh.lt.xpertfinder.methods;
 import de.uhh.lt.xpertfinder.dao.AanDao;
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.service.StatisticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class GlobalCitationsMethod implements ExpertFindingMethod<DefaultRequest
 
     @Override
     public DefaultRequest getRequestObject() {
-        return new DefaultRequest();
+        return new DefaultRequest(1000, 25);
     }
 
     @Override

@@ -1,16 +1,17 @@
 package de.uhh.lt.xpertfinder.controller;
 
+import com.google.gson.Gson;
 import de.uhh.lt.xpertfinder.finder.DocumentResult;
 import de.uhh.lt.xpertfinder.finder.ExpertQuery;
 import de.uhh.lt.xpertfinder.finder.ExpertRetrievalResult;
+import de.uhh.lt.xpertfinder.methods.DefaultRequest;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
+import de.uhh.lt.xpertfinder.model.graph.Collaboration;
 import de.uhh.lt.xpertfinder.model.graph.Function2;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
-import de.uhh.lt.xpertfinder.model.graph.Collaboration;
-import de.uhh.lt.xpertfinder.service.ExpertRetrieval;
-import de.uhh.lt.xpertfinder.service.ExpertTopic;
+import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.service.MethodService;
-import de.uhh.lt.xpertfinder.service.NewExpertRetrieval;
+import de.uhh.lt.xpertfinder.service.ExpertRetrieval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.thymeleaf.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,9 +37,6 @@ public class GraphController extends SessionController {
 
     @Autowired
     private ExpertRetrieval expertRetrieval;
-
-    @Autowired
-    private NewExpertRetrieval newExpertRetrieval;
 
     @Autowired
     private MethodService methodService;
@@ -64,16 +65,13 @@ public class GraphController extends SessionController {
 
         // find the experts with the selected method
         ExpertRetrievalResult expertRetrievalResult = null;
-        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod());
-        if(method != null) {
-//            expertRetrievalResult = newExpertRetrieval.findExperts(expertTopic, expertQuery.getMethod(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
-        } else if(Integer.parseInt(expertQuery.getMethod()) < 6) {
-            expertRetrievalResult = expertRetrieval.findExperts(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount(), expertQuery.getK(),expertQuery.getLambda(), expertQuery.getEpsilon(), expertQuery.getMd(), expertQuery.getMca());
-        } else if (Integer.parseInt(expertQuery.getMethod()) == 6) {
-            expertRetrievalResult = expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());
-        } else {
-            expertRetrievalResult = expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(expertQuery.getMethod()), expertQuery.getResultCount());
+        ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]);
+        if(method == null) {
+            return;
         }
+        Gson gson = new Gson();
+        DefaultRequest defaultRequest = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), method.getRequestObject().getClass());
+        expertRetrievalResult = expertRetrieval.findExperts(expertTopic, expertQuery.getMethod()[0], defaultRequest);
 
         Map<String, Double> expertRelevanceMap = expertRetrievalResult.getExpertResultList();
         Map<String, Double> documentRelevanceMap = expertRetrievalResult.getDocumentResultList();

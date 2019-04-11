@@ -1,9 +1,8 @@
 package de.uhh.lt.xpertfinder.controller;
 
-import de.uhh.lt.xpertfinder.finder.DocumentResult;
-import de.uhh.lt.xpertfinder.finder.ExpertQuery;
-import de.uhh.lt.xpertfinder.finder.ExpertResult;
-import de.uhh.lt.xpertfinder.finder.ExpertRetrievalResult;
+import com.google.gson.Gson;
+import de.uhh.lt.xpertfinder.finder.*;
+import de.uhh.lt.xpertfinder.methods.DefaultRequest;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
 import de.uhh.lt.xpertfinder.model.graph.Collaboration;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
@@ -30,9 +29,6 @@ public class TableController extends SessionController {
     ExpertRetrieval expertRetrieval;
 
     @Autowired
-    NewExpertRetrieval newExpertRetrieval;
-
-    @Autowired
     private StatisticService statisticService;
 
     @Autowired
@@ -41,18 +37,14 @@ public class TableController extends SessionController {
     @RequestMapping(value = "/table", method = RequestMethod.GET)
     public String table(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic lol, BindingResult errors, Model model) {
 
-        if(expertQuery.getTopic() == null || expertQuery.getMethod1() == null || expertQuery.getMethod2() == null || expertQuery.getMethod3() == null || expertQuery.getMethod4() == null) {
+        if(expertQuery.getTopic() == null ) {
             // nothing
-        } else if (!(expertQuery.getMethod1().equals(expertQuery.getMethod2()) && expertQuery.getMethod2().equals(expertQuery.getMethod3()) && expertQuery.getMethod3().equals(expertQuery.getMethod4()))) {
+        } else {
             List<List<ExpertResult>> results = evaluateExpertRetrieval(expertQuery);
-            if(results != null) {
-                tableToLatex(results);
-                tableToCSV(results);
-            }
-            model.addAttribute("method1name", methodService.getExpertFindingMethodById(expertQuery.getMethod1()) != null ? methodService.getExpertFindingMethodById(expertQuery.getMethod1()).getName() : expertQuery.getMethod1());
-            model.addAttribute("method2name", methodService.getExpertFindingMethodById(expertQuery.getMethod2()) != null ? methodService.getExpertFindingMethodById(expertQuery.getMethod2()).getName() : expertQuery.getMethod2());
-            model.addAttribute("method3name", methodService.getExpertFindingMethodById(expertQuery.getMethod3()) != null ? methodService.getExpertFindingMethodById(expertQuery.getMethod3()).getName() : expertQuery.getMethod3());
-            model.addAttribute("method4name", methodService.getExpertFindingMethodById(expertQuery.getMethod4()) != null ? methodService.getExpertFindingMethodById(expertQuery.getMethod4()).getName() : expertQuery.getMethod4());
+            model.addAttribute("method1name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]).getName());
+            model.addAttribute("method2name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[1]).getName());
+            model.addAttribute("method3name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[2]).getName());
+            model.addAttribute("method4name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[3]).getName());
             model.addAttribute("result", results);
         }
 
@@ -63,76 +55,21 @@ public class TableController extends SessionController {
     private List<List<ExpertResult>> evaluateExpertRetrieval(ExpertQuery eq) {
         List<List<ExpertResult>> results = new ArrayList<>();
 
-        ExpertTopic expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-        expertTopic.setup(eq.getTopic(), eq.getTopDocCount(), true, true, true, eq.getOptions());
+        Gson gson = new Gson();
 
-        if(!expertTopic.isInitialized()) {
-            return null;
+        for(int i = 0; i < 4; i++) {
+            ExpertFindingMethod method = methodService.getExpertFindingMethodById(eq.getMethod()[i]);
+            DefaultRequest defaultRequest = gson.fromJson(eq.getMethodParamMap().get(i).get(eq.getMethod()[i]), method.getRequestObject().getClass());
+
+            ExpertTopic expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
+            expertTopic.setup(eq.getTopic(), defaultRequest.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), eq.getOptions());
+
+            if(!expertTopic.isInitialized()) {
+                results.add(null);
+                continue;
+            }
+            results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, eq.getMethod()[i], defaultRequest), defaultRequest.getResults(), expertTopic.getGraph()));
         }
-
-        ExpertFindingMethod method = methodService.getExpertFindingMethodById(eq.getMethod1());
-        if(method != null) {
-//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod1(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if(Integer.parseInt(eq.getMethod1()) < 6) {
-            results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod1()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if (Integer.parseInt(eq.getMethod1()) == 6) {
-            results.add(createExpertResult(expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(eq.getMethod1()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        } else {
-            results.add(createExpertResult(expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(eq.getMethod1()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        }
-
-        ExpertFindingMethod method2 = methodService.getExpertFindingMethodById(eq.getMethod2());
-        if(method2 != null) {
-//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod2(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if(Integer.parseInt(eq.getMethod2()) < 6) {
-            results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod2()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if (Integer.parseInt(eq.getMethod2()) == 6) {
-            results.add(createExpertResult(expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(eq.getMethod2()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        } else {
-            results.add(createExpertResult(expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(eq.getMethod2()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        }
-
-        ExpertFindingMethod method3 = methodService.getExpertFindingMethodById(eq.getMethod3());
-        if(method3 != null) {
-//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod3(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if(Integer.parseInt(eq.getMethod3()) < 6) {
-            results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod3()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if (Integer.parseInt(eq.getMethod3()) == 6) {
-            results.add(createExpertResult(expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(eq.getMethod3()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        } else {
-            results.add(createExpertResult(expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(eq.getMethod3()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        }
-
-        ExpertFindingMethod method4 = methodService.getExpertFindingMethodById(eq.getMethod4());
-        if(method4 != null) {
-//            results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod4(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if(Integer.parseInt(eq.getMethod4()) < 6) {
-            results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, Integer.parseInt(eq.getMethod4()), eq.getResultCount(), eq.getK(),eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-        } else if (Integer.parseInt(eq.getMethod4()) == 6) {
-            results.add(createExpertResult(expertRetrieval.findExpertsElastic(expertTopic, Integer.parseInt(eq.getMethod4()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        } else {
-            results.add(createExpertResult(expertRetrieval.findExpertsSimple(expertTopic, Integer.parseInt(eq.getMethod4()), eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));
-        }
-
-        
-//        results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod1(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-//        results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod2(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-//        results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod3(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-//        results.add(createExpertResult(newExpertRetrieval.findExperts(expertTopic, eq.getMethod4(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));
-
-        // results.add(expertRetrieval.findExpertsSimple(expertTopic, 7, eq.getResultCount()));                                                                     // local hindex
-        // results.add(expertRetrieval.findExpertsSimple(expertTopic, 8, eq.getResultCount()));                                                                     // global hindex
-        // results.add(expertRetrieval.findExpertsSimple(expertTopic, 9, eq.getResultCount()));                                                                     // local citations
-//        results.add(createExpertResult(expertRetrieval.findExpertsSimple(expertTopic, 10, eq.getResultCount()), eq.getResultCount(), expertTopic.getGraph()));                                                                     // global citations
-
-        // results.add(expertRetrieval.findExpertsElastic(expertTopic, eq.getTopDocCount(), eq.getResultCount()));                                                          // elastic
-
-//        results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, 3, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));      // model2
-        // results.add(expertRetrieval.findExperts(expertTopic, 0, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()));      // k-step
-        // results.add(expertRetrieval.findExperts(expertTopic, 1, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()));      // infinite
-//        results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, 2, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));       // infinite2
-//        results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, 4, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()), eq.getResultCount(), expertTopic.getGraph()));       // infinite3
-        // results.add(expertRetrieval.findExperts(expertTopic, 5, eq.getResultCount(), eq.getK(), eq.getLambda(), eq.getEpsilon(), eq.getMd(), eq.getMca()));      // pagerank
 
         return results;
     }
@@ -210,47 +147,5 @@ public class TableController extends SessionController {
         }
 
         return result;
-    }
-
-    private void tableToLatex(List<List<ExpertResult>> results) {
-
-        for(int i = 0; i < results.get(0).size(); i++) {
-            StringBuilder builder = new StringBuilder();
-            builder.append((i+1) + " & ");
-
-            int j = 0;
-            for(List<ExpertResult> list : results) {
-                builder.append(list.get(i).getName());
-
-                if(j == results.size() - 1) {
-                    builder.append(" \\\\");
-                } else {
-                    builder.append(" & ");
-                }
-                j++;
-            }
-            System.out.println(builder.toString());
-        }
-    }
-
-    private void tableToCSV(List<List<ExpertResult>> results) {
-
-        for(int i = 0; i < results.get(0).size(); i++) {
-            StringBuilder builder = new StringBuilder();
-            builder.append((i+1) + ";");
-
-            int j = 0;
-            for(List<ExpertResult> list : results) {
-                builder.append(list.get(i).getName());
-
-                if(j == results.size() - 1) {
-                    //builder.append(";");
-                } else {
-                    builder.append(";");
-                }
-                j++;
-            }
-            System.out.println(builder.toString());
-        }
     }
 }
