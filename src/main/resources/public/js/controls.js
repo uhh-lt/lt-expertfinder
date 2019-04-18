@@ -1,6 +1,8 @@
 var selected = "";
 var selectedGroup = -1;
 
+var profileUrl = "";
+
 function closeControls() {
     handleControls(selected);
 }
@@ -28,11 +30,15 @@ function updateControls() {
     var link = document.getElementById("control-link");
     var publicationsname = document.getElementById("publications-name");
 
+
+    if(profileUrl === "")
+        profileUrl = link.getAttribute("href");
+
     if(selected.realgroup === 2) {
         link.setAttribute("href", "http://aclweb.org/anthology/" + selected.id + ".pdf");
         publicationsname.textContent = "Authors:"
     } else {
-        link.setAttribute("href", "/xpertfinder/aanprofile/" + selected.id);
+        link.setAttribute("href", profileUrl + "/" + selected.id);
         publicationsname.textContent = "Documents:"
     }
     title.textContent = selected.realgroup == 2 ? selected.id : selected.description;
