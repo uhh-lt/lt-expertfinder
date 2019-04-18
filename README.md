@@ -80,6 +80,7 @@ To quickly setup your own LT Expertfinder Server, you will have to install the f
 #### 1. Get the source code
 - Start by cloning this git repository
 - Let's assume the path on your local machine to this source code is now /path/to/lt-expertfinder/
+    - You will only need /docker and /tools, you can delete /src if you want
 
 #### 2. Start the Docker Containers
 - Switch to the docker directory: cd /path/to/lt-expertfinder/docker
