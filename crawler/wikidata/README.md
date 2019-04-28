@@ -5,7 +5,7 @@ First we will need to create a file that contains all author names which we will
 - Export the result set as CSV
 - Remove "" that surround the author names for example with a simple text editor
 - Split the authors.csv file into multiple files, each containing 20 names
-  - split -l=20 authors.csv
+  - split -l20 authors.csv
 - Move the new files into a directory called authors
 
 ## Crawl Wikidata
