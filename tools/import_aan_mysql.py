@@ -1,5 +1,4 @@
 import json,sys,io,os,re
-from pprint import pprint
 from argparse import ArgumentParser
 import mysql.connector
 
@@ -62,68 +61,68 @@ def main():
 	
 	args = parser.parse_args()
 	
-	aan_path = os.path.normpath(args.aan);
+	aan_path = os.path.normpath(args.aan)
 	citations = os.path.normpath("release/2014/networks/paper-citation-network.txt")
 	metadata = os.path.normpath("release/2014/acl-metadata.txt")
-	citations_path = os.path.normpath(aan_path+"/"+citations);
-	metadata_path = os.path.normpath(aan_path+"/"+metadata);
+	citations_path = os.path.normpath(aan_path+"/"+citations)
+	metadata_path = os.path.normpath(aan_path+"/"+metadata)
 	
 	id = ""
 	author = ""
 	title = ""
-	venue = "";
-	year = 0;
+	venue = ""
+	year = 0
 	
-	with io.open(metadata_path, 'r', encoding="UTF-8") as file:
-		for line in file:
-					
-			matchEmpty = re.match(r'^\s*$', line);
-			if matchEmpty:
-				print("id:"+id+" author: "+author+" title: "+title+" venue: "+venue+" year: "+year)
-				
-				addDocument(id, title, venue, year) # add the document
-				
-				authors = author.split(";")
-				firstAuthor = authors[0]
-				addAuthor(firstAuthor) # add first author
-				addPublication(firstAuthor, id) # add publication for first author
-				for a in authors[1:]:
-					addAuthor(a) # add other authors
-					addPublication(a, id) # add publication for other authors
-				
-				count = 1
-				for a in authors:
-					for b in authors[count:]:
-						addCollaboration(a, b) # add collaborations between all authors
-					count = count + 1
-				
-				
-				id = ""
-				author = ""
-				title = ""
-				venue = "";
-				year = 0;
-			else:
-				matchData = re.match(r'^(.*) = {(.*)}$', line)
-				if matchData:
-					type = matchData.group(1)
-					value = matchData.group(2)
-					
-					if type == "id":
-						id = value
-					elif type == "author":
-						author = value
-					elif type == "year":
-						year = value
-					elif type == "venue":
-						venue = value
-					elif type == "title":
-						title = value
+	# with io.open(metadata_path, 'r', encoding="utf-8") as file:
+	# 	for line in file:
+	#
+	# 		matchEmpty = re.match(r'^\s*$', line)
+	# 		if matchEmpty:
+	# 			print("id:"+id+" author: "+author+" title: "+title+" venue: "+venue+" year: "+year)
+	#
+	# 			addDocument(id, title, venue, year) # add the document
+	#
+	# 			authors = author.split(";")
+	# 			firstAuthor = authors[0]
+	# 			addAuthor(firstAuthor) # add first author
+	# 			addPublication(firstAuthor, id) # add publication for first author
+	# 			for a in authors[1:]:
+	# 				addAuthor(a) # add other authors
+	# 				addPublication(a, id) # add publication for other authors
+	#
+	# 			count = 1
+	# 			for a in authors:
+	# 				for b in authors[count:]:
+	# 					addCollaboration(a, b) # add collaborations between all authors
+	# 				count = count + 1
+	#
+	#
+	# 			id = ""
+	# 			author = ""
+	# 			title = ""
+	# 			venue = ""
+	# 			year = 0
+	# 		else:
+	# 			matchData = re.match(r'^(.*) = {(.*)}$', line)
+	# 			if matchData:
+	# 				type = matchData.group(1)
+	# 				value = matchData.group(2)
+	#
+	# 				if type == "id":
+	# 					id = value
+	# 				elif type == "author":
+	# 					author = value
+	# 				elif type == "year":
+	# 					year = value
+	# 				elif type == "venue":
+	# 					venue = value
+	# 				elif type == "title":
+	# 					title = value
 				
 	
-	with io.open(citations_path, 'r', encoding="utf8") as file:
+	with io.open(citations_path, 'r', encoding="utf-8") as file:
 		for line in file:
-			outgoing, incoming = line.split(" ==> ");
+			outgoing, incoming = line.split(" ==> ")
 			print("Inserting Citation: "+outgoing.strip()+" ==> "+incoming.strip())
 			addCitation(outgoing.strip(), incoming.strip())
 	

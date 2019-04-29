@@ -1,5 +1,4 @@
 import json,sys,io,os
-from argparse import ArgumentParser
 from elasticsearch import Elasticsearch
 from argparse import ArgumentParser
 
@@ -9,9 +8,9 @@ def main():
 	
 	args = parser.parse_args()
 	
-	aan_path = os.path.normpath(args.aan);
+	aan_path = os.path.normpath(args.aan)
 	papers = "papers_text"
-	papers_path = os.path.normpath(aan_path+"/"+papers);
+	papers_path = os.path.normpath(aan_path+"/"+papers)
 
 	es = Elasticsearch(['localhost'], port=9200)
 	
@@ -24,7 +23,7 @@ def main():
 			id = os.path.splitext(filename)[0]
 			with io.open(filepath, 'r', encoding="utf8") as file:
 				# read file
-				file_data = file.read();
+				file_data = file.read()
 				# create json object
 				data_obj = {}
 				data_obj['text'] = file_data

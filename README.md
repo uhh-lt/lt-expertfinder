@@ -44,6 +44,11 @@ To successfully start developing for LT Expertfinder, you will have to install t
 - Double check that 4 containers (elasticsearch, kibana, mysql, phpmyadmin) are running: docker ps
     - The full text PDF data is stored in Elasticsearch
     - The network information (citations, publications, authors etc.) are stored in a MySQL database
+- There is a common error, that elasticsearch crashes after a few seconds, due to no write permissions. In case the elasticsearch docker container is not running, try the following:
+    - cd /path/to/lt-expertfinder/docker/
+    - stop all docker containers: docker-compose -f docker-compose-dev.yml down
+    - sudo chmod 777 data/elasticsearch/
+    - restart all docker containers: docker-compose -f docker-compose-dev.yml up -d
 
 #### 3. Import the ACL Anthology Network (AAN) data
 - Download the AAN dataset from http://tangra.cs.yale.edu/newaan/index.php/home/download
