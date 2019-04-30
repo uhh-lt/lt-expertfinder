@@ -40,6 +40,7 @@
                 <a th:href="@{/ui}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="View a ranked list of Experts"><i class="fas fa-list-ol"></i> List</a>
                 <a th:href="@{/graph}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Get an insight into the data"><i class="fa fa-project-diagram"></i> Graph</a>
                 <a th:href="@{/table}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Compare different Expert Retrieval Methods"><i class="fa fa-chart-bar"></i> Evaluation</a>
+                <a th:href="@{/about}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Information about LT-Expertfinder"><i class="fas fa-info-circle"></i> About</a>
                 <form th:if="${expertQuery}" id="expertsearchbar" class="w3-right w3-hide-small" action="#" th:action="@{/postExpertQuery}" th:object="${expertQuery}" method="post">
                     <input type="text" class="w3-bar-item w3-input w3-padding-large" placeholder="Search.." th:field="${expertQuery.topic}">
                     <button class="w3-bar-item w3-button w3-padding-large w3-theme-d4" name="redirectTo" th:value="${redirectTo}" type="submit"><i class="fa fa-search"></i></button>
@@ -52,6 +53,7 @@
             <a th:href="@{/ui}" class="w3-bar-item w3-button w3-padding-large">List</a>
             <a th:href="@{/graph}" class="w3-bar-item w3-button w3-padding-large">Graph</a>
             <a th:href="@{/table}" class="w3-bar-item w3-button w3-padding-large">Evaluation</a>
+            <a th:href="@{/about}" class="w3-bar-item w3-button w3-padding-large">About</a>
             <form th:if="${expertQuery}" action="#" th:action="@{/postExpertQuery}" th:object="${expertQuery}" method="post">
                 <input type="text" class="w3-bar-item w3-input w3-padding-large" placeholder="Search.." th:field="${expertQuery.topic}">
                 <button class="w3-bar-item w3-button w3-padding-large w3-theme-d4" name="redirectTo" th:value="${redirectTo}" type="submit"><i class="fa fa-search"></i></button>

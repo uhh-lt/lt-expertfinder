@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>About</title>
+    <!--/*/ <th:block th:include="fragments/general :: headerfiles">
+            </th:block> /*/-->
+</head>
+<body class="w3-theme-l5">
+
+    <!-- Navbar -->
+    <div th:replace="fragments/general :: header"></div>
+
+    <!-- Page Container -->
+    <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+
+
+        <div class="w3-row">
+            <div class="w3-col m8" style="padding-right:16px;">
+
+                <div class="w3-card w3-round w3-white">
+                    <div class="w3-container w3-padding">
+                        <h2>About LT Expertfinder</h2>
+                        <p style="font-size: 18px">This is the LT Expertfinder, an open source evaluation framework for expert finding methods.
+                        The LT Expertfinder enables you to compare, evaluate and use different expert finding methods.
+                        To leverage the evaluation process, LT Expertfinder provides many different tools that will help
+                        to a obtain detailed insights into the expert finding methods.</p>
+                        <p style="font-size: 18px">Currently, the tool operates on the ACL Anthology Network
+                        (<a target="_blank" href="http://tangra.cs.yale.edu/newaan/">http://tangra.cs.yale.edu/newaan/</a>).
+                        Also, the LT Expertfinder utilizes data crawled from Wikidata
+                        (<a href="https://www.wikidata.org/" target="_blank">https://www.wikidata.org/</a>), as well as Google Scholar
+                        (<a href="https://scholar.google.de/" target="_blank">https://scholar.google.de/</a>).
+                        These crawled information are used to enrich expert profiles, but currently, have no impact on the expert ranking.</p>
+                        <p style="font-size: 18px">In addition to this, the LT Expertfinder extracts keywords for every document, which are also
+                        used to give more detailed search results as well as expert profiles. The keyword extraction tool
+                        can be found at <a href="https://github.com/uhh-lt/lt-keyterms" target="_blank">https://github.com/uhh-lt/lt-keyterms</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w3-col m4">
+
+                <div class="w3-card w3-round w3-white">
+
+                    <header class="w3-container w3-theme" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                        <h4>Links</h4>
+                    </header>
+                    <div class="w3-container">
+                        <ul>
+                            <li>GitHub (<a href="https://github.com/uhh-lt/lt-expertfinder" target="_blank">https://github.com/uhh-lt/lt-expertfinder</a>)</li>
+                            <li>Demo Video (<a href="https://youtu.be/A4yRZezWUvE" target="_blank">https://youtu.be/A4yRZezWUvE</a>)</li>
+                            <li>Paper (<a href="" target="_blank"></a>)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w3-row">
+            <div class="w3-col m12" style="margin-top: 16px;">
+
+                <div class="w3-card w3-round w3-white">
+
+                    <header class="w3-container w3-theme" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                        <h4>How-to Cite</h4>
+                    </header>
+                    <div class="w3-container">
+                        <p style="font-size: 18px;">
+                            Tim Fischer, Steffen Remus and Chris Biemann (2019): LT Expertfinder: An Evaluation
+                            Framework for Expert Finding Methods. Proceedings of the 2019 Conference of the North
+                            American Chapter of the Association for Computational Linguistics: Human Language
+                            Technologies, to appear, Minneapolis, MN, USA
+                        </p>
+<pre><code>@inproceedings{fischer-remus-biemann-2019-expertfinding,
+  title     = {{LT} {E}xpertfinder: {A}n Evaluation Framework for Expert Finding Methods},
+  author    = {Fischer, Tim and Remus, Steffen and Biemann, Chris},
+  booktitle = {Proceedings of the 2019 Conference of the North American Chapter of the
+Association for Computational Linguistics: Human Language Technologies},
+  year      = {2019},
+  address   = {Minneapolis, MN, USA},
+  pages     = {to appear}
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    <!-- End Page Container -->
+    </div>
+
+    <br>
+
+    <!-- Footer -->
+    <div th:replace="fragments/general :: footer"></div>
+
+    <script th:replace="fragments/general :: scripts"></script>
+</body>
+</html>
