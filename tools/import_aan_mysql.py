@@ -130,7 +130,7 @@ def main():
                         title = value
 
 
-    with io.open(citations_path, 'r', encoding="utf-8") as file:
+    with io.open(citations_path, 'r', encoding="utf-8", errors='replace') as file:
         for line in file:
             outgoing, incoming = line.split(" ==> ")
             print("Inserting Citation: "+outgoing.strip()+" ==> "+incoming.strip())
