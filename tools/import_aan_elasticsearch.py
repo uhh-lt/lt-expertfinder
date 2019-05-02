@@ -25,8 +25,7 @@ def main():
 				# read file
 				file_data = file.read()
 				# create json object
-				data_obj = {}
-				data_obj['text'] = file_data
+				data_obj = {'text': file_data}
 				json_data = json.dumps(data_obj)
 				# import to elasticsearch
 				es.index(index='aan', doc_type="_doc", id=id, body=json_data)
