@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import mysql.connector
 import html
 import sys
+import ftfy
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -80,11 +81,10 @@ def main():
     venue = ""
     year = 0
 
-    with io.open(metadata_path, 'r', encoding="utf-8", errors='replace') as file:
+    with io.open(metadata_path, 'r', encoding="iso-8859-1") as file:
         for l in file:
 
-            line = html.unescape(l)
-            print(line)
+            line = ftfy.fix_text(l)
 
             matchEmpty = re.match(r'^\s*$', line)
             if matchEmpty:
@@ -93,9 +93,9 @@ def main():
                 addDocument(id, title, venue, year) # add the document
 
                 authors = author.split(";")
-                firstAuthor = authors[0]
-                addAuthor(firstAuthor) # add first author
-                addPublication(firstAuthor, id) # add publication for first author
+                first_author = authors[0]
+                addAuthor(first_author) # add first author
+                addPublication(first_author, id) # add publication for first author
                 for a in authors[1:]:
                     addAuthor(a) # add other authors
                     addPublication(a, id) # add publication for other authors
@@ -113,10 +113,10 @@ def main():
                 venue = ""
                 year = 0
             else:
-                matchData = re.match(r'^(.*) = {(.*)}$', line)
-                if matchData:
-                    type = matchData.group(1)
-                    value = matchData.group(2)
+                match_data = re.match(r'^(.*) = {(.*)}$', line)
+                if match_data:
+                    type = match_data.group(1)
+                    value = match_data.group(2)
 
                     if type == "id":
                         id = value
@@ -128,7 +128,6 @@ def main():
                         venue = value
                     elif type == "title":
                         title = value
-
 
     with io.open(citations_path, 'r', encoding="utf-8", errors='replace') as file:
         for line in file:
