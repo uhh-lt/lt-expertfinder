@@ -7,7 +7,7 @@ A running version of this tool can be found at http://ltdemos.informatik.uni-ham
 
 A short demonstration video is also availale at https://youtu.be/A4yRZezWUvE.
 
-The demonstration paper "LT Expertfinder: An Evaluation Frameworkfor Expert Finding Methods" will be published in NAACL 2019 and can be viewd at <Link>.
+The demonstration paper "LT Expertfinder: An Evaluation Framework for Expert Finding Methods" will be published in NAACL 2019 and can be read at https://www.inf.uni-hamburg.de/en/inst/ab/lt/publications/2019-fischeretal-naacldemo-expertfinder.pdf.
  
  ## Expert Finding Methods
  The LT Expertfinder ships already with some basic expert finding methods:
@@ -22,7 +22,7 @@ The demonstration paper "LT Expertfinder: An Evaluation Frameworkfor Expert Find
  If you wish to add your own expert finding method and use the tool to compare it see the section below.
  
  ## Set up your own LT Expertfinder for Development
- While the LT Expertfinder is already a good tool to use, compare and evaluate our pre-implemented expert finding methods, you might want to add to these methods by setting up your own instance of LT Expertfinder and expanding the source code. Implementing your own expert finding method will enable you to compare it to the already existing methods. If you are intereseted in this, follow the steps below, otherwise, if you just want to use or the existing methods we recommend you to use the running version of this tool.
+ While the LT Expertfinder is already a good tool to use, compare and evaluate our pre-implemented expert finding methods, you might want to add to these methods by setting up your own instance of LT Expertfinder and expanding the source code. Implementing your own expert finding method will enable you to compare it to the already existing methods. If you are intereseted in this, follow the steps below, otherwise, if you just want to use the existing methods we recommend you to use the running version of this tool.
 
 #### 0. Requirements
 To successfully start developing for LT Expertfinder, you will have to install the following software:
@@ -33,6 +33,15 @@ To successfully start developing for LT Expertfinder, you will have to install t
     - MySQL module: pip install mysql-connector
 - Docker
 - Docker-Compose
+
+#### 0.1 Install Python Dependencies
+- Navigate to the tools directory: cd .../lt-expertfinder/tools/
+- Create a new virtual environment: python3 -m venv env
+- Activate the new virtual environment: source env/bin/activate
+- Install dependencies: pip3 install -r requirements.txt
+- Please use this virtual environment for the following steps, if you are asked to run a python script!
+- Once finished, you can deactivate the virtual environment: deactivate
+
 
 #### 1. Get the source code
 - Start by cloning this git repository
@@ -50,15 +59,38 @@ To successfully start developing for LT Expertfinder, you will have to install t
     - sudo chmod 777 data/elasticsearch/
     - restart all docker containers: docker-compose -f docker-compose-dev.yml up -d
 
-#### 3. Import the ACL Anthology Network (AAN) data
+#### 3.1 Import the ACL Anthology Network (AAN) data
 - Download the AAN dataset from http://tangra.cs.yale.edu/newaan/index.php/home/download
-- Extract the *.tar.gz, Let's assume the path on your local machine to AAN is now /path/to/aanrelease2014/
+- Extract the *.tar.gz, Let's assume the path on your local machine to AAN is now /path/to/aan/
 - Navigate to the tools directory shipped with LT Expertfinder: cd /path/to/lt-expertfinder/tools/
 - (For the next step, please make sure that the MySQL Database as well as the Elasticsearch Index are running with docker ps as we are now going to import the AAN)
 - Import the AAN full text PDFs: python import_aan_elasticsearch.py -a /path/to/aanrelease2014/aan/
     - This will take a while, you can continue with the next import
-- Import the network information: python import_aan_mysql.py -a /path/to/aanrelease2014/aan/
+- Import the network information: python import_aan_mysql.py -a /path/to/aan/
 - Wait until the Imports are finished
+
+#### 3.2 Import the GoogleScholar Crawl
+- Navigate to the datasets directory: cd /path/to/lt-expertfinder/datasets/
+- Find the file called google_scholar_crawl.tar.gz and extract the contents to a folder of your choice. Now, let's assume
+  the path to the extracted google_scholar_crawl directory is /path/to/google_scholar_crawl/
+- Navigate to the tools directory: cd /path/to/lt-expertfinder/tools/
+- Make sure that the docker containers are running: docker ps
+- Run the GoogleScholar Crawl import script: python import_googlescholarmysql.py -p /path/to/google_scholar_crawl
+
+#### 3.3 Import the WikiData Crawl
+- Navigate to the datasets directory: cd /path/to/lt-expertfinder/datasets/
+- Find the file called wikidata_crawl.tar.gz and extract the contents to a folder of your choice. Now, let's assume
+  the path to the extracted wikidata_crawl directory is /path/to/wikidata_crawl/
+- Navigate to the tools directory: cd /path/to/lt-expertfinder/tools/
+- Make sure that the docker containers are running: docker ps
+- Run the WikiData Crawl import script: python import_wikidata_mysql.py -p /path/to/wikidata_crawl
+
+#### 3.4 Extract Keywords
+- Navigate to the tools directory: cd /path/to/lt-expertfinder/tools/
+- Make sure that the docker containers are running: docker ps
+- Make sure that you have Java Version 1.8: java -version
+- Run the Keyword Extraction tool: java -jar import_keywords.jar -dbn xpertfinder -ei aan
+- This will take a while!
 
 #### 4. Start developing!
 - Open this project (/path/to/lt-expertfinder/) with the editor of your choice

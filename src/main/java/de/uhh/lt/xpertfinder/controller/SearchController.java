@@ -6,6 +6,7 @@ import de.uhh.lt.xpertfinder.finder.ExpertQuery;
 import de.uhh.lt.xpertfinder.methods.DefaultRequest;
 import de.uhh.lt.xpertfinder.methods.ExpertFindingMethod;
 import de.uhh.lt.xpertfinder.finder.ExpertTopic;
+import de.uhh.lt.xpertfinder.methods.InfiniteRandomWeightedMethod;
 import de.uhh.lt.xpertfinder.service.MethodService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,15 @@ public class SearchController extends SessionController {
     @Autowired
     MethodService methodService;
 
+    private Gson gson = new Gson();
+
     @PostMapping("/postExpertQuery")
     public RedirectView postExpertQuery(@RequestParam("redirectTo") String redirectTo, @ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, RedirectAttributes attributes) {
 
         // handle the special case, that the topic exactly matches one author name
         List<Long> ids = aanDao.checkExactAuthorMatch(expertTopic.getTopic());
         if(ids != null && ids.size() == 1) {
-            return new RedirectView("/aanprofile/"+ids.get(0), true);
+            return new RedirectView("/profile/"+ids.get(0), true);
         }
 
         if(!redirectTo.equals("table"))
@@ -67,9 +70,14 @@ public class SearchController extends SessionController {
         ExpertFindingMethod method = methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]);
         if(method != null) {
             expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-            Gson gson = new Gson();
-            DefaultRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), DefaultRequest.class);
-            expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
+            // TODO: THIS IS NOT NICE; FIX IT!
+            if(method instanceof InfiniteRandomWeightedMethod) {
+                InfiniteRandomWeightedMethod.InfiniteRandomWeightedRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), InfiniteRandomWeightedMethod.InfiniteRandomWeightedRequest.class);
+                expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), request.getOptions());
+            } else {
+                DefaultRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), DefaultRequest.class);
+                expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
+            }
             logger.debug("Finished creating TOPIC after " + (System.nanoTime() - time) + " nanoseconds");
         } else {
             logger.debug("FAILED creating TOPIC: Method is unknown!");

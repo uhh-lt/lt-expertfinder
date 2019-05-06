@@ -1,10 +1,7 @@
 package de.uhh.lt.xpertfinder.methods;
 
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
-import de.uhh.lt.xpertfinder.model.graph.Authorship;
-import de.uhh.lt.xpertfinder.model.graph.Citation;
-import de.uhh.lt.xpertfinder.model.graph.Collaboration;
-import de.uhh.lt.xpertfinder.model.graph.Graph;
+import de.uhh.lt.xpertfinder.model.graph.*;
 import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.utils.MathUtils;
 import org.slf4j.Logger;
@@ -22,6 +19,7 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
         private double epsilon;
         private double md;
         private double mca;
+        private GraphOptions options;
 
         public InfiniteRandomWeightedRequest() {
         }
@@ -34,12 +32,13 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
             this.mca = mca;
         }
 
-        public InfiniteRandomWeightedRequest(int documents, int results, double lambda, double epsilon, double md, double mca) {
+        public InfiniteRandomWeightedRequest(int documents, int results, double lambda, double epsilon, double md, double mca, GraphOptions options) {
             super(documents, results);
             this.lambda = lambda;
             this.epsilon = epsilon;
             this.md = md;
             this.mca = mca;
+            this.options = options;
         }
 
         public double getLambda() {
@@ -72,6 +71,14 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
 
         public void setMca(double mca) {
             this.mca = mca;
+        }
+
+        public GraphOptions getOptions() {
+            return options;
+        }
+
+        public void setOptions(GraphOptions options) {
+            this.options = options;
         }
     }
     
@@ -107,7 +114,7 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
 
     @Override
     public InfiniteRandomWeightedRequest getRequestObject() {
-        return new InfiniteRandomWeightedRequest(1000, 25, 0.1, 0.00000008, 0.5, 0.25);
+        return new InfiniteRandomWeightedRequest(1000, 25, 0.1, 0.00000008, 0.5, 0.25, new GraphOptions(true, true, true, true, true));
     }
 
     @Override

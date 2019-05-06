@@ -66,7 +66,7 @@ public interface AanDao extends CrudRepository<Keyword, Long> {
     @Query(value = "SELECT * FROM (SELECT c.author2 as author, c.count, a.id FROM collaborations_aan2 AS c JOIN authors_aan as a ON c.author2 = a.name WHERE c.author1 = ?1   UNION SELECT c.author1 as author, c.count, a.id FROM collaborations_aan2 as c JOIN authors_aan as a ON c.author1 = a.name WHERE c.author2 = ?1) as mytable ORDER BY mytable.count DESC", nativeQuery = true)
     List<Object[]> findCollaborationsForAuthorByName(String authorname);
 
-    @Query(value = "SELECT * FROM wikidata_map m JOIN wikidata w ON w.item = m.wikidataid WHERE m.authorid = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM wikidata w WHERE w.authorid = ?1", nativeQuery = true)
     List<Object[]> findWikidataProfileForAuthorId(Long id);
 
     @Query(value = "SELECT a.id FROM authors_aan a WHERE (a.name LIKE %?1% OR a.alt_name LIKE %?1%)", nativeQuery = true)

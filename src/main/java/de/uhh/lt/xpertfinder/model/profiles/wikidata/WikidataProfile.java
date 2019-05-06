@@ -1,5 +1,7 @@
 package de.uhh.lt.xpertfinder.model.profiles.wikidata;
 
+import java.math.BigInteger;
+
 public class WikidataProfile {
 
     private int authorid;
@@ -19,20 +21,20 @@ public class WikidataProfile {
     private int size;
 
     public WikidataProfile(Object[] wikidata) {
-        this.authorid = (int) wikidata[0];
+        this.authorid = ((BigInteger) wikidata[0]).intValue();
         this.wikidataid = (String) wikidata[1];
-        this.lables = (String) wikidata[3];
-        this.awards = (String) wikidata[4];
-        this.birthday = (String) wikidata[5];
-        this.countires = (String) wikidata[6];
-        this.educations = (String) wikidata[7];
-        this.employers = (String) wikidata[8];
-        this.fieldofworks = (String) wikidata[9];
-        this.google = (String) wikidata[10];
-        this.img = (String) wikidata[11];
-        this.occupations = (String) wikidata[12];
-        this.twitter = (String) wikidata[13];
-        this.website = (String) wikidata[14];
+        this.lables = (String) wikidata[2];
+        this.awards = (String) wikidata[3];
+        this.birthday = (String) wikidata[4];
+        this.countires = (String) wikidata[5];
+        this.educations = (String) wikidata[6];
+        this.employers = (String) wikidata[7];
+        this.fieldofworks = (String) wikidata[8];
+        this.google = (String) wikidata[9];
+        this.img = (String) wikidata[10];
+        this.occupations = (String) wikidata[11];
+        this.twitter = (String) wikidata[12];
+        this.website = (String) wikidata[13];
 
         size = 0;
         for(int i = 3; i <=14; i++) {

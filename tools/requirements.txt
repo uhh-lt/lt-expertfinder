@@ -1,0 +1,3 @@
+mysql-connector
+elasticsearch
+ftfy

@@ -253,6 +253,7 @@ public class UIController extends SessionController {
         }
 
         // get document keywords
+        // TODO: FIX DUPLICATE KEYWORDS; USE SET !!
         List<Object[]> documentKeywordList = keywordDao.findKeywordsForDocuments(fileList);
         Map<String, List<String>> documentKeywordMap = new HashMap<>();
         for(Object[] obj : documentKeywordList) {

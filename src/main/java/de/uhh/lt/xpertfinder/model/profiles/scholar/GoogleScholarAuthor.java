@@ -3,7 +3,6 @@ package de.uhh.lt.xpertfinder.model.profiles.scholar;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "google_authors")
@@ -35,22 +34,23 @@ public class GoogleScholarAuthor {
     @Column(name="hindex")
     private int hindex;
 
-    @Column(name="i20")
-    private int i20;
+    @Column(name="i10")
+    private int i10;
 
-    @OneToMany(mappedBy = "googleScholarAuthor", cascade = CascadeType.ALL)
-    private List<GoogleScholarPaper> papers;
+    @Column(name="link")
+    private String link;
 
     public GoogleScholarAuthor() {}
 
-    public GoogleScholarAuthor(String name, String description, String img, String fieldsofwork, int citations, int hindex, int i20) {
+    public GoogleScholarAuthor(String name, String description, String img, String fieldsofwork, int citations, int hindex, int i10, String link) {
         this.name = name;
         this.description = description;
         this.img = img;
         this.fieldsofwork = fieldsofwork;
         this.citations = citations;
         this.hindex = hindex;
-        this.i20 = i20;
+        this.i10 = i10;
+        this.link = link;
     }
 
     public String getName() {
@@ -93,22 +93,6 @@ public class GoogleScholarAuthor {
         this.hindex = hindex;
     }
 
-    public int getI20() {
-        return i20;
-    }
-
-    public void setI20(int i20) {
-        this.i20 = i20;
-    }
-
-    public List<GoogleScholarPaper> getPapers() {
-        return papers;
-    }
-
-    public void setPapers(List<GoogleScholarPaper> papers) {
-        this.papers = papers;
-    }
-
     public String getImg() {
         return img;
     }
@@ -131,5 +115,21 @@ public class GoogleScholarAuthor {
 
     public void setAuthorId(Long authorId) {
         this.authorId = authorId;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public int getI10() {
+        return i10;
+    }
+
+    public void setI10(int i10) {
+        this.i10 = i10;
     }
 }

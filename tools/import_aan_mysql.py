@@ -135,6 +135,7 @@ def main():
             print("Inserting Citation: "+outgoing.strip()+" ==> "+incoming.strip())
             addCitation(outgoing.strip(), incoming.strip())
 
+    print("Finished importing AAN! :)")
 
 if __name__ == "__main__":
     main()

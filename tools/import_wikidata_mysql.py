@@ -42,15 +42,17 @@ def createAuthorIdMap():
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("-c", "--csv", dest="csv", help="path to csv", metavar="CSV")
-    parser.add_argument("-m", "--map", dest="map", help="path to map", metavar="MAP")
+    parser.add_argument("-p", "--path", dest="path", help="path to the wikidata_crawl directory", metavar="PATH")
     args = parser.parse_args()
-    csv_path = os.path.normpath(args.csv)
-    map_path = os.path.normpath(args.map)
-    print(csv_path)
-    print(map_path)
+
+    if not args.path:
+        parser.print_help()
+        return
+
+    path_path = os.path.normpath(args.path)
+    csv_path = os.path.normpath(path_path + "/whole.csv")
+    map_path = os.path.normpath(path_path + "/map.csv")
     nameIdMap = createAuthorIdMap()
-    print(nameIdMap["akio fujiyoshi"])
 
     createTable()
 
@@ -89,6 +91,8 @@ def main():
             params = (authorid, row['item'], row['labels'], awards, row['birthday'], row['countries'], row['educations'], row['employers'], row['fieldofworks'], row['google'], row['img'], row['occupations'], row['twitter'], row['website'])
             mycursor.execute(sql, params)
             mydb.commit()
+
+    print("Finished importing Wikidata Crawl! :)")
 
 
 
