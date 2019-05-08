@@ -85,6 +85,7 @@ services:
       - spring.datasource.password=xpertfinder
       - elastichostname=elasticsearch
       - elasticport=9200
+      - elasticindex=aan
     ports:
      - 8080:8080
     networks:
