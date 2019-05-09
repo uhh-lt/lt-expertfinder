@@ -111,6 +111,20 @@ public class Graph {
         }
     }
 
+    private <T> void fillMap(Map<String, List<T>> map, Object[] data, boolean swapped) {
+        Object data0 = swapped ? data[1] : data[0];
+        Object data1 = swapped ? data[0] : data[1];
+
+        if (!map.containsKey(data0)) {
+            List<T> list = new ArrayList<>();
+            list.add((T) data1);
+            map.put((String) data0, list);
+        } else {
+            List<T> documents = map.get(data0);
+            documents.add((T) data1);
+        }
+    }
+
     private void extractPublications() {
         if(!(publication || collaboration))
             return;
@@ -127,7 +141,7 @@ public class Graph {
         for(Object[] info : publications) { // info[0] = author; info[1] = document
 
             if (publication) {
-                if (!documentAuthorNeighbors.containsKey(info[1])) {
+               if (!documentAuthorNeighbors.containsKey(info[1])) {
                     List<Authorship> as = new ArrayList<>();
                     as.add(new Authorship((String) info[0]));
                     documentAuthorNeighbors.put((String) info[1], as);
@@ -136,14 +150,16 @@ public class Graph {
                     as.add(new Authorship((String) info[0]));
                 }
 
-                if (!authorDocumentNeighbors.containsKey(info[0])) {
-                    List<String> documents = new ArrayList<>();
-                    documents.add((String) info[1]);
-                    authorDocumentNeighbors.put((String) info[0], documents);
-                } else {
-                    List<String> documents = authorDocumentNeighbors.get(info[0]);
-                    documents.add((String) info[1]);
-                }
+                fillMap(authorDocumentNeighbors, info, false);
+//
+//                if (!authorDocumentNeighbors.containsKey(info[0])) {
+//                    List<String> documents = new ArrayList<>();
+//                    documents.add((String) info[1]);
+//                    authorDocumentNeighbors.put((String) info[0], documents);
+//                } else {
+//                    List<String> documents = authorDocumentNeighbors.get(info[0]);
+//                    documents.add((String) info[1]);
+//                }
                 docs.add((String) info[1]);
             }
             authors.add((String) info[0]);
@@ -163,6 +179,7 @@ public class Graph {
         this.numAuthAuth = collaborations.size();
 
         for(Object[] info : collaborations) { // info[0] = author1; info[1] = author2
+
             if(!authorAuthorNeighbors.containsKey(info[0])) {
                 List<Collaboration> collaborations1 = new ArrayList<>();
                 collaborations1.add(new Collaboration((String) info[1], (int) info[2]));
@@ -209,32 +226,36 @@ public class Graph {
                 documents.add(new Citation((String) info[1]));
             }
 
-            if(!documentDocumentInNeighbors.containsKey(info[1])) {
-                List<String> documents = new ArrayList<>();
-                documents.add((String) info[0]);
-                documentDocumentInNeighbors.put((String) info[1], documents);
-            } else {
-                List<String> documents = documentDocumentInNeighbors.get(info[1]);
-                documents.add((String) info[0]);
-            }
+            fillMap(documentDocumentInNeighbors, info, true);
+            fillMap(documentDocumentNeighbors, info, false);
+            fillMap(documentDocumentNeighbors, info, true);
 
-            if(!documentDocumentNeighbors.containsKey(info[0])) {
-                List<String> documents = new ArrayList<>();
-                documents.add((String) info[1]);
-                documentDocumentNeighbors.put((String) info[0], documents);
-            } else {
-                List<String> documents = documentDocumentNeighbors.get(info[0]);
-                documents.add((String) info[1]);
-            }
-
-            if(!documentDocumentNeighbors.containsKey(info[1])) {
-                List<String> documents = new ArrayList<>();
-                documents.add((String) info[0]);
-                documentDocumentNeighbors.put((String) info[1], documents);
-            } else {
-                List<String> documents = documentDocumentNeighbors.get(info[1]);
-                documents.add((String) info[0]);
-            }
+//            if(!documentDocumentInNeighbors.containsKey(info[1])) {
+//                List<String> documents = new ArrayList<>();
+//                documents.add((String) info[0]);
+//                documentDocumentInNeighbors.put((String) info[1], documents);
+//            } else {
+//                List<String> documents = documentDocumentInNeighbors.get(info[1]);
+//                documents.add((String) info[0]);
+//            }
+//
+//            if(!documentDocumentNeighbors.containsKey(info[0])) {
+//                List<String> documents = new ArrayList<>();
+//                documents.add((String) info[1]);
+//                documentDocumentNeighbors.put((String) info[0], documents);
+//            } else {
+//                List<String> documents = documentDocumentNeighbors.get(info[0]);
+//                documents.add((String) info[1]);
+//            }
+//
+//            if(!documentDocumentNeighbors.containsKey(info[1])) {
+//                List<String> documents = new ArrayList<>();
+//                documents.add((String) info[0]);
+//                documentDocumentNeighbors.put((String) info[1], documents);
+//            } else {
+//                List<String> documents = documentDocumentNeighbors.get(info[1]);
+//                documents.add((String) info[0]);
+//            }
 
             docs.add((String) info[0]);
             docs.add((String) info[1]);
