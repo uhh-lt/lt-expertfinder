@@ -107,8 +107,8 @@ public class TableController extends SessionController {
             // calculate local and global collaborations
             int localCollaborations = 0;
             int globalColalborations = 0;
-            if(graph.getAuthorAuthorNeighbors2().containsKey(author)) {
-                for(Collaboration coll : graph.getAuthorAuthorNeighbors2().get(author)) {
+            if(graph.getAuthorAuthorNeighbors().containsKey(author)) {
+                for(Collaboration coll : graph.getAuthorAuthorNeighbors().get(author)) {
                     localCollaborations += coll.getLocalCount();
                     globalColalborations += coll.getGlobalCount();
                 }

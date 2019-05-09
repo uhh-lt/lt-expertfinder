@@ -21,27 +21,29 @@ The demonstration paper "LT Expertfinder: An Evaluation Framework for Expert Fin
  
  If you wish to add your own expert finding method and use the tool to compare it see the section below.
  
- ## Set up your own LT Expertfinder for Development
- While the LT Expertfinder is already a good tool to use, compare and evaluate our pre-implemented expert finding methods, you might want to add to these methods by setting up your own instance of LT Expertfinder and expanding the source code. Implementing your own expert finding method will enable you to compare it to the already existing methods. If you are intereseted in this, follow the steps below, otherwise, if you just want to use the existing methods we recommend you to use the running version of this tool.
+ ## Set up the LT Expertfinder
+ 
+ #### 0. Requirements
+ To successfully start developing for LT Expertfinder, you will have to install the following software:
+ - Java 1.8
+ - Maven
+ - Python > 3
+     - Elasticsearch module: pip install elasticsearch
+     - MySQL module: pip install mysql-connector
+ - Docker
+ - Docker-Compose
+ 
+ #### 0.1 Install Python Dependencies
+ - Navigate to the tools directory: cd .../lt-expertfinder/tools/
+ - Create a new virtual environment: python3 -m venv env
+ - Activate the new virtual environment: source env/bin/activate
+ - Install dependencies: pip3 install -r requirements.txt
+ - Please use this virtual environment for the following steps, if you are asked to run a python script!
+ - Once finished, you can deactivate the virtual environment: deactivate
 
-#### 0. Requirements
-To successfully start developing for LT Expertfinder, you will have to install the following software:
-- Java 1.8
-- Maven
-- Python > 3
-    - Elasticsearch module: pip install elasticsearch
-    - MySQL module: pip install mysql-connector
-- Docker
-- Docker-Compose
-
-#### 0.1 Install Python Dependencies
-- Navigate to the tools directory: cd .../lt-expertfinder/tools/
-- Create a new virtual environment: python3 -m venv env
-- Activate the new virtual environment: source env/bin/activate
-- Install dependencies: pip3 install -r requirements.txt
-- Please use this virtual environment for the following steps, if you are asked to run a python script!
-- Once finished, you can deactivate the virtual environment: deactivate
-
+ 
+### Set up your own LT Expertfinder for Development
+ While the LT Expertfinder is already a good tool to use, compare and evaluate our pre-implemented expert finding methods, you might want to add you own methods by setting up your own instance of LT Expertfinder and expanding the source code. Implementing your own expert finding method will enable you to compare it to the already existing methods. If you are intereseted in this, follow the steps below, otherwise, if you just want to use the existing methods we recommend you to use the running version of this tool.
 
 #### 1. Get the source code
 - Start by cloning this git repository
@@ -109,11 +111,6 @@ If you followed this tutorial, everything is setup with the default values. You 
 ## Set up your own LT Expertfinder Server
 If you are not interested in developing LT Expertfinder and just want to host your own LT Expertfinder Server, please follow the instructions below:
 
-#### 0. Requirements
-To quickly setup your own LT Expertfinder Server, you will have to install the following software:
-- Docker
-- Docker-Compose
-
 #### 1. Get the source code
 - Start by cloning this git repository
 - Let's assume the path on your local machine to this source code is now /path/to/lt-expertfinder/
@@ -124,15 +121,23 @@ To quickly setup your own LT Expertfinder Server, you will have to install the f
 - Startup all the containers: docker-compose -f docker-compose-prod.yml up -d
 -- Please note that this file utilizes our latest published Docker container of LT Expertfinder that is available at https://cloud.docker.com/u/uhhlt/repository/docker/uhhlt/xpertfinder
 
-#### 3. Import the ACL Anthology Network (AAN) data
+#### 3.1 Import the ACL Anthology Network (AAN) data
 - Download the AAN dataset from http://tangra.cs.yale.edu/newaan/index.php/home/download
 - Extract the *.tar.gz, Let's assume the path on your local machine to AAN is now /path/to/aanrelease2014/
 - Navigate to the tools directory shipped with LT Expertfinder: cd /path/to/lt-expertfinder/tools/
-- (For the next step, please make sure that the MySQL Database as well as the Elasticsearch Index are running with docker ps as we are now going to import the AAN)
-- Import the AAN full text PDFs: python import_aan_elasticsearch.py -a /path/to/aanrelease2014/aan/
+- (For the next step, please make sure that the Elasticsearch Docker is running with docker ps as we are now going to import the AAN)
+- Import the AAN full text PDFs: python import_aan_elasticsearch.py -a /path/to/aan/
     - This will take a while, you can continue with the next import
-- Import the network information: python import_aan_mysql.py -a /path/to/aanrelease2014/aan/
-- Wait until the Imports are finished
+- Wait until the import is finished
+
+#### 3.2 Import the MySQL Dump
+In this step, you will import authors, documents, their relations (citations, collaborations, authorships), extracted keywords, WikiData crawl and GoogleScholar crawl that contain further information about each author from our provided MySQL dump.
+Instead of using the MySQL Dump, you can also manually recreate the database with our scripts. However, this will take some time. If you want to contruct the database yourself, please read the instructions here.
+- Make sure that docker containers are running: docker ps
+- Copy SQL backup to MySQL Docker Container: docker cp /path/to/lt-expertfinder/datasets/mysql_dump.sql docker_mysql_1:mysql_dump.sql
+- Connect to MySQL docker: docker exec -ti docker_mysql_1 bash
+- Apply backup: mysql -uroot -p xpertfinder < xpertfinder_backup.sql
+- exit
 
 #### 4. Restart the Docker Containers
 - Switch to the docker directory: cd /path/to/lt-expertfinder/docker

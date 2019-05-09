@@ -111,7 +111,7 @@ public class GraphController extends SessionController {
                 int collaborations = 0;
 
 
-                for(Collaboration coll: graph.getAuthorAuthorNeighbors2().get(author1)) {
+                for(Collaboration coll: graph.getAuthorAuthorNeighbors().get(author1)) {
                     collaborationSum = collaborationSum + coll.getGlobalCount();
 
                     if(coll.getAuthor().equals(author2))

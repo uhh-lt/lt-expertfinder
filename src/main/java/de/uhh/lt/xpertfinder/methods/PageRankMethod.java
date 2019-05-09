@@ -152,8 +152,8 @@ public class PageRankMethod implements ExpertFindingMethod<PageRankMethod.PageRa
                 double sum1 = 0;
                 double sum2 = 0;
 
-                if(graph.getAuthorAuthorNeighbors2().containsKey(author)) {
-                    for(Collaboration collaboration : graph.getAuthorAuthorNeighbors2().get(author)) {
+                if(graph.getAuthorAuthorNeighbors().containsKey(author)) {
+                    for(Collaboration collaboration : graph.getAuthorAuthorNeighbors().get(author)) {
                         String inc_author = collaboration.getAuthor();
                         sum1 += pa[i-1].get(inc_author)  / graph.getOutDegAuthor(inc_author);
                     }

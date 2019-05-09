@@ -17,9 +17,6 @@ public interface AanDao extends CrudRepository<Keyword, Long> {
     @Query(value = "SELECT c.outgoing_file, c.incoming_file FROM citations_aan AS c WHERE c.outgoing_file IN ?1 AND c.incoming_file IN ?1", nativeQuery = true)
     List<Object[]> findAllCitationsAAN(List<String> files);
 
-    @Query(value = "SELECT c.author1, c.author2 FROM collaborations_aan as c WHERE c.author1 IN ?1 AND c.author2 IN ?1", nativeQuery = true)
-    List<Object[]> findAllCollaborationsAAN(List<String> authors);
-
     @Query(value = "SELECT c.author1, c.author2, c.count FROM collaborations_aan2 as c WHERE c.author1 IN ?1 AND c.author2 IN ?1", nativeQuery = true)
     List<Object[]> findAllCollaborationsAAN2(List<String> authors);
 

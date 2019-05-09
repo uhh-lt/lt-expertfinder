@@ -201,8 +201,8 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
                     }
                 }
 
-                if(graph.getAuthorAuthorNeighbors2().containsKey(author)) {
-                    for(Collaboration coll : graph.getAuthorAuthorNeighbors2().get(author)) {
+                if(graph.getAuthorAuthorNeighbors().containsKey(author)) {
+                    for(Collaboration coll : graph.getAuthorAuthorNeighbors().get(author)) {
                         score3 = score3 + Math.exp(
                                 Math.log(pca2ca(coll.getAuthor(), author))
 //                                        Math.log(coll.getWeight())
@@ -272,7 +272,7 @@ public class InfiniteRandomWeightedMethod implements ExpertFindingMethod<Infinit
 
     // local & global collaboration count
     private double pca2ca(String author1, String author2) {
-        for (Collaboration collaboration : graph.getAuthorAuthorNeighbors2().get(author1)) {
+        for (Collaboration collaboration : graph.getAuthorAuthorNeighbors().get(author1)) {
             if(collaboration.getAuthor().equals(author2)) {
                 return collaboration.getWeight();
             }

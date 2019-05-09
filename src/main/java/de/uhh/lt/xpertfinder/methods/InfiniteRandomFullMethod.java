@@ -2,6 +2,7 @@ package de.uhh.lt.xpertfinder.methods;
 
 import de.uhh.lt.xpertfinder.finder.ExpertFindingResult;
 import de.uhh.lt.xpertfinder.model.graph.Authorship;
+import de.uhh.lt.xpertfinder.model.graph.Collaboration;
 import de.uhh.lt.xpertfinder.model.graph.Graph;
 import de.uhh.lt.xpertfinder.finder.ExpertTopic;
 import de.uhh.lt.xpertfinder.utils.MathUtils;
@@ -189,7 +190,8 @@ public class InfiniteRandomFullMethod implements ExpertFindingMethod<InfiniteRan
                 }
 
                 if(graph.getAuthorAuthorNeighbors().containsKey(author)) {
-                    for(String auth : graph.getAuthorAuthorNeighbors().get(author)) {
+                    for(Collaboration col : graph.getAuthorAuthorNeighbors().get(author)) {
+                        String auth = col.getAuthor();
                         score3 = score3 + Math.exp(
                                 Math.log(1.0d / graph.getAuthorAuthorNeighbors().get(auth).size())
                                         + Math.log(pca[i-1].get(auth))

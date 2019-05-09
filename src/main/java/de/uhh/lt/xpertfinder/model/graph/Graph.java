@@ -39,8 +39,7 @@ public class Graph {
     private Map<String, List<String>> documentDocumentNeighbors = new HashMap<>();  // document1 <--> document2
     private Map<String, List<Citation>> documentDocumentOutNeighbors = new HashMap<>();  // document1 --> document2: outgoing document 1
     private Map<String, List<String>> documentDocumentInNeighbors = new HashMap<>();  // document1 --> document2: incoming document 2
-    private Map<String, List<String>> authorAuthorNeighbors = new HashMap<>();      // author1 <--> author2
-    private Map<String, List<Collaboration>> authorAuthorNeighbors2 = new HashMap<>();      // author1 <--> author2
+    private Map<String, List<Collaboration>> authorAuthorNeighbors = new HashMap<>();      // author1 <--> author2
 
     // stats
     private int numDocDoc;
@@ -65,7 +64,6 @@ public class Graph {
         // extract nodes & edges from top docs
         extractPublications();
         extractCollaborations();
-        extractCollaborations2();
         extractCitations();
 
         // create author <--> id map
@@ -160,61 +158,26 @@ public class Graph {
 
         // get authors -> author relations from top relevant authors
         logger.debug("Get author - author relations");
-        List<Object[]> collaborations = aanDao.findAllCollaborationsAAN(new ArrayList<>(authors));
-        System.out.println(collaborations.size());
-
-        for(Object[] info : collaborations) { // info[0] = author1; info[1] = author2
-            if(!authorAuthorNeighbors.containsKey(info[0])) {
-                List<String> authors = new ArrayList<>();
-                authors.add((String) info[1]);
-                authorAuthorNeighbors.put((String) info[0], authors);
-            } else {
-                List<String> authors = authorAuthorNeighbors.get(info[0]);
-                authors.add((String) info[1]);
-            }
-
-            if(!authorAuthorNeighbors.containsKey(info[1])) {
-                List<String> authors = new ArrayList<>();
-                authors.add((String) info[0]);
-                authorAuthorNeighbors.put((String) info[1], authors);
-            } else {
-                List<String> authors = authorAuthorNeighbors.get(info[1]);
-                authors.add((String) info[0]);
-            }
-
-            authors.add((String) info[0]);
-            authors.add((String) info[1]);
-        }
-    }
-
-    private void extractCollaborations2() {
-        if(!collaboration)
-            return;
-
-        authorAuthorNeighbors2.clear();
-
-        // get authors -> author relations from top relevant authors
-        logger.debug("Get author - author relations");
         List<Object[]> collaborations = aanDao.findAllCollaborationsAAN2(new ArrayList<>(authors));
         System.out.println(collaborations.size());
         this.numAuthAuth = collaborations.size();
 
         for(Object[] info : collaborations) { // info[0] = author1; info[1] = author2
-            if(!authorAuthorNeighbors2.containsKey(info[0])) {
+            if(!authorAuthorNeighbors.containsKey(info[0])) {
                 List<Collaboration> collaborations1 = new ArrayList<>();
                 collaborations1.add(new Collaboration((String) info[1], (int) info[2]));
-                authorAuthorNeighbors2.put((String) info[0], collaborations1);
+                authorAuthorNeighbors.put((String) info[0], collaborations1);
             } else {
-                List<Collaboration> collaborations1 = authorAuthorNeighbors2.get(info[0]);
+                List<Collaboration> collaborations1 = authorAuthorNeighbors.get(info[0]);
                 collaborations1.add(new Collaboration((String) info[1], (int) info[2]));
             }
 
-            if(!authorAuthorNeighbors2.containsKey(info[1])) {
+            if(!authorAuthorNeighbors.containsKey(info[1])) {
                 List<Collaboration> collaborations1 = new ArrayList<>();
                 collaborations1.add(new Collaboration((String) info[0], (int) info[2]));
-                authorAuthorNeighbors2.put((String) info[1], collaborations1);
+                authorAuthorNeighbors.put((String) info[1], collaborations1);
             } else {
-                List<Collaboration> collaborations1 = authorAuthorNeighbors2.get(info[1]);
+                List<Collaboration> collaborations1 = authorAuthorNeighbors.get(info[1]);
                 collaborations1.add(new Collaboration((String) info[0], (int) info[2]));
             }
 
@@ -369,7 +332,7 @@ public class Graph {
 
         logger.debug("Calculate collaboration graph");
 
-        for(Map.Entry<String, List<Collaboration>> entry : authorAuthorNeighbors2.entrySet()) {
+        for(Map.Entry<String, List<Collaboration>> entry : authorAuthorNeighbors.entrySet()) {
             String author1 = entry.getKey();
 
             int localCollaborationSum = 0;
@@ -438,7 +401,7 @@ public class Graph {
         if(!authors.contains(author))
             return 0;
 
-        return (authorAuthorNeighbors2.containsKey(author) ? authorAuthorNeighbors2.get(author).size() : 0) + (authorDocumentNeighbors.containsKey(author) ? authorDocumentNeighbors.get(author).size() : 0);
+        return (authorAuthorNeighbors.containsKey(author) ? authorAuthorNeighbors.get(author).size() : 0) + (authorDocumentNeighbors.containsKey(author) ? authorDocumentNeighbors.get(author).size() : 0);
     }
 
     public int getInDegDocument(String document) {
@@ -483,12 +446,8 @@ public class Graph {
         return documentDocumentInNeighbors;
     }
 
-    public Map<String, List<String>> getAuthorAuthorNeighbors() {
+    public Map<String, List<Collaboration>> getAuthorAuthorNeighbors() {
         return authorAuthorNeighbors;
-    }
-
-    public Map<String, List<Collaboration>> getAuthorAuthorNeighbors2() {
-        return authorAuthorNeighbors2;
     }
 
     public Miserables visualizeGraph(Function<String, String> printAuthor, Function<String, String> printDocument, Function2<String, String, String> printPublication, Function2<String, String, String> printCitation, Function2<String, String, String> printCollaboration, Function2<String, String, String> printAuthorship, Function<String, Double> calcAuthorSize, Function<String, Double> calcDocumentSize, Function2<String, String, Double> calcPublicationSize, Function2<String, String, Double> calcCitationSize, Function2<String, String, Double> calcCollaborationSize, Function2<String, String, Double> calcAuthorshipSize) {
@@ -539,7 +498,7 @@ public class Graph {
                 links.add(link);
             }
         }
-        for (Map.Entry<String, List<Collaboration>> entry : getAuthorAuthorNeighbors2().entrySet()) {
+        for (Map.Entry<String, List<Collaboration>> entry : getAuthorAuthorNeighbors().entrySet()) {
             String author1 = entry.getKey();
             for (Collaboration collaboration1 : entry.getValue()) {
                 Link link = new Link("collaboration", authorIdMap.getOrDefault(author1, -1L).toString(), authorIdMap.getOrDefault(collaboration1.getAuthor(), -1l).toString(), calcCollaborationSize.apply(author1, collaboration1.getAuthor()), printCollaboration.apply(author1, collaboration1.getAuthor()));
