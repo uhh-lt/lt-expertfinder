@@ -37,7 +37,7 @@ public class TableController extends SessionController {
     @RequestMapping(value = "/table", method = RequestMethod.GET)
     public String table(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic lol, BindingResult errors, Model model) {
 
-        if(expertQuery.getTopic() == null ) {
+        if(expertQuery.getTopic() == null || expertQuery.getTopic().isEmpty()) {
             // nothing
         } else {
             List<List<ExpertResult>> results = evaluateExpertRetrieval(expertQuery);

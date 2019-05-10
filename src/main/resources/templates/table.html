@@ -39,70 +39,72 @@
             <th th:text="${method3name}"></th>
             <th th:text="${method4name}"></th>
         </tr>
-        <tr th:each="i : ${#numbers.sequence( 0, result.get(0).size() - 1)}">
+        <tr th:each="i : ${#numbers.sequence( 0, T(Math).max(T(Math).max(T(Math).max(result.get(0).size(), result.get(1).size()), result.get(2).size()), result.get(3).size()) - 1)}">
             <td th:text="${i + 1}"></td>
-            <td th:each="j : ${#numbers.sequence( 0, result.size() - 1)}" th:with="expert = ${result.get(j).get(i)}" th:inline="text">
-                <a onmouseenter="evalsearch(this)" class="evaluation-name" href="#" th:onclick="'show(\'' + ${j} + 'm' + ${expert.id} + '\');'">[[${#strings.capitalizeWords(expert.name)}]]</a>
+            <td th:each="j : ${#numbers.sequence( 0, result.size() - 1)}" th:inline="text">
+                <th:block th:if="${result.get(j).size() > i}" th:with="expert = ${result.get(j).get(i)}">
+                    <a onmouseenter="evalsearch(this)" class="evaluation-name" href="#" th:onclick="'show(\'' + ${j} + 'm' + ${expert.id} + '\');'">[[${#strings.capitalizeWords(expert.name)}]]</a>
 
-                <div th:id="${j} + 'm' + ${expert.id}" class="w3-modal" style="padding-bottom:100px;">
-                    <div class="w3-modal-content w3-container"  style="width:80%; padding-bottom:16px">
+                    <div th:id="${j} + 'm' + ${expert.id}" class="w3-modal" style="padding-bottom:100px;">
+                        <div class="w3-modal-content w3-container"  style="width:80%; padding-bottom:16px">
 
                             <span th:onclick="'hide(\'' + ${j} + 'm' + ${expert.id} + '\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
                             <h4 th:inline="text"><a th:inline="text" th:href="@{'/profile/' + ${expert.id}}">[[${#strings.capitalizeWords(expert.name)}]]</a> is assumed to be an expert for [[${#strings.capitalizeWords(expertTopic.topic)}]] because of the following publications:</h4>
 
-                        <!-- Right Column -->
-                        <div class="w3-col m3" style="margin-bottom:16px;">
-                            <table class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
-                                <tr class="w3-theme">
-                                    <th><b>Statistics</b></th>
-                                    <th>Local</th>
-                                    <th>Global</th>
-                                </tr>
-                                <tr>
-                                    <td>H-Index</td>
-                                    <td>[[${expert.localHindex}]]</td>
-                                    <td>[[${expert.hindex}]]</td>
-                                </tr>
-                                <tr>
-                                    <td>Publications</td>
-                                    <td th:inline="text">[[${expert.localpublications}]]</td>
-                                    <td th:inline="text">[[${expert.publications}]]</td>
-                                </tr>
-                                <tr>
-                                    <td>Citations</td>
-                                    <td th:inline="text">[[${expert.localcitations}]]</td>
-                                    <td th:inline="text">[[${expert.citations}]]</td>
-                                </tr>
-                                <tr>
-                                    <td>Collaborations</td>
-                                    <td th:inline="text">[[${expert.localcollaborations}]]</td>
-                                    <td th:inline="text">[[${expert.collaborations}]]</td>
-                                </tr>
-                            </table>
-                            <!-- End Right Column -->
-                        </div>
+                            <!-- Right Column -->
+                            <div class="w3-col m3" style="margin-bottom:16px;">
+                                <table class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
+                                    <tr class="w3-theme">
+                                        <th><b>Statistics</b></th>
+                                        <th>Local</th>
+                                        <th>Global</th>
+                                    </tr>
+                                    <tr>
+                                        <td>H-Index</td>
+                                        <td>[[${expert.localHindex}]]</td>
+                                        <td>[[${expert.hindex}]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Publications</td>
+                                        <td th:inline="text">[[${expert.localpublications}]]</td>
+                                        <td th:inline="text">[[${expert.publications}]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Citations</td>
+                                        <td th:inline="text">[[${expert.localcitations}]]</td>
+                                        <td th:inline="text">[[${expert.citations}]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Collaborations</td>
+                                        <td th:inline="text">[[${expert.localcollaborations}]]</td>
+                                        <td th:inline="text">[[${expert.collaborations}]]</td>
+                                    </tr>
+                                </table>
+                                <!-- End Right Column -->
+                            </div>
 
-                        <!-- Left Column -->
-                        <div>
-                            <table th:id="'modal-table-'+${j}+'m'+${expert.id}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
-                                <tr class="w3-theme">
-                                    <th style="width: 110px;" th:onclick="'sortTable(0, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">File</th>
-                                    <th th:onclick="'sortTable(1, \'modal-table-'+${j}+'m'+${expert.id}+'\', true)'">Relevance</th>
-                                    <th th:onclick="'sortTable(2, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">Title</th>
-                                </tr>
-                                <tr th:each="item : ${expert.documents}">
-                                    <td th:inline="text">
-                                        <a target="_blank" th:href="'http://aclweb.org/anthology/' + ${item.getFile()} + '.pdf'">[[${item.getFile()}]]</a>
-                                    </td>
-                                    <td th:text="${item.getRelevance()}"></td>
-                                    <td th:text="${item.getTitle()}"></td>
-                                </tr>
-                            </table>
-                        <!-- End Left Column -->
-                        </div>
+                            <!-- Left Column -->
+                            <div>
+                                <table th:id="'modal-table-'+${j}+'m'+${expert.id}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
+                                    <tr class="w3-theme">
+                                        <th style="width: 110px;" th:onclick="'sortTable(0, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">File</th>
+                                        <th th:onclick="'sortTable(1, \'modal-table-'+${j}+'m'+${expert.id}+'\', true)'">Relevance</th>
+                                        <th th:onclick="'sortTable(2, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">Title</th>
+                                    </tr>
+                                    <tr th:each="item : ${expert.documents}">
+                                        <td th:inline="text">
+                                            <a target="_blank" th:href="'http://aclweb.org/anthology/' + ${item.getFile()} + '.pdf'">[[${item.getFile()}]]</a>
+                                        </td>
+                                        <td th:text="${item.getRelevance()}"></td>
+                                        <td th:text="${item.getTitle()}"></td>
+                                    </tr>
+                                </table>
+                                <!-- End Left Column -->
+                            </div>
 
+                        </div>
                     </div>
-                </div>
+                </th:block>
             </td>
         </tr>
     </table>
@@ -115,8 +117,35 @@
 
 <!-- Footer -->
 <script th:replace="fragments/general :: multiplemethodsscript"></script>
-
 <div th:replace="fragments/general :: footer"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var advanced = /*[[${expertQuery.advanced}]]*/ null;
+    var result = /*[[${result}]]*/ null;
+    var footer = document.getElementsByTagName("footer")[0];
+    if(result === null) {
+        function manageFooter() {
+            advanced = !advanced;
+            if(advanced) {
+                footer.classList.replace("myfooter2", "myfooter");
+            } else {
+                footer.classList.replace("myfooter", "myfooter2");
+            }
+        }
+        var el = document.getElementById("advancedbutton");
+        el.addEventListener("click", manageFooter);
+
+        if(advanced) {
+            footer.classList.replace("myfooter2", "myfooter");
+        } else {
+            footer.classList.replace("myfooter", "myfooter2");
+        }
+    } else {
+        footer.classList.replace("myfooter2", "myfooter");
+    }
+    /*]]>*/
+</script>
 
 <script th:replace="fragments/general :: scripts"></script>
 

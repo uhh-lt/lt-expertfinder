@@ -96,6 +96,10 @@ function initData() {
         all_nodes[node.id] = node;
         all_nodes[node.id].links = 0;
         all_nodes[node.id].realgroup = node.group;
+        all_nodes[node.id].x = 0;
+        all_nodes[node.id].y = 0;
+        all_nodes[node.id].px = 0;
+        all_nodes[node.id].py = 0;
     });
 
     var all_links = graph.links;
@@ -286,44 +290,45 @@ function restart() {
 /*
 ----------------- MAIN -----------------
  */
+if(graph !== null) {
+    // INITIALIZATION
+    var edges = 50;
 
-// INITIALIZATION
-var edges = 50;
+    var container = $('.chart-container'),
+        width = container.width(),
+        height = container.height();
+    var colors = initColors();
+    initMarkers();
+    var data = initData();
+    var canvas = initSvg(width, height);
+    var force = initForceLayout([], [], width, height);
+    var svg = canvas.svg,
+        root = canvas.root;
+    initZoomBehahviour(svg);
+    var node_drag = initDragBehaviour(force);
 
-var container = $('.chart-container'),
-    width = container.width(),
-    height = container.height();
-var colors = initColors();
-initMarkers();
-var data = initData();
-var canvas = initSvg(width, height);
-var force = initForceLayout([], [], width, height);
-var svg = canvas.svg,
-    root = canvas.root;
-initZoomBehahviour(svg);
-var node_drag = initDragBehaviour(force);
+    // build initial state
+    // add links
+    var init_links = data.all_links.slice(0, Math.min(edges, data.all_links.length));
+    var links = [];
+    //add Nodes
+    var nodes = [];
+    var current_graph;
+    init_links.forEach(function(link) {
+        if(nodes.indexOf(link.source) === -1 ) {
+            console.log("SOURCE NODE DOES NOT EXIST!!!");
+            nodes.push(link.source);
+            addAllCurrentLinks(link.source);
+        }
+        if(nodes.indexOf(link.target) === -1 ) {
+            console.log("TARGET NODE DOES NOT EXIST!!!");
+            nodes.push(link.target);
+            addAllCurrentLinks(link.target);
+        }
+    });
 
-// build initial state
-// add links
-var init_links = data.all_links.slice(0, Math.min(edges, data.all_links.length));
-var links = [];
-//add Nodes
-var nodes = [];
-var current_graph;
-init_links.forEach(function(link) {
-    if(nodes.indexOf(link.source) === -1 ) {
-        console.log("SOURCE NODE DOES NOT EXIST!!!");
-        nodes.push(link.source);
-        addAllCurrentLinks(link.source);
-    }
-    if(nodes.indexOf(link.target) === -1 ) {
-        console.log("TARGET NODE DOES NOT EXIST!!!");
-        nodes.push(link.target);
-        addAllCurrentLinks(link.target);
-    }
-});
-
-updateLayout();
+    updateLayout();
+}
 
 function addLinks(linksToAdd) {
     // add all links

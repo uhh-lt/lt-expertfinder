@@ -32,7 +32,7 @@
                         </table>
                     </div>
                     <p style="margin-bottom: 6px;">
-                        <button type="button" onclick="toggleAdvancedInput('advancedsearch')" class="w3-button w3-theme"><i id="advancedinputicon" th:classappend="*{advanced} ? 'fas fa-angle-double-up' : 'fas fa-angle-double-down'"></i>  Advanced</button>
+                        <button type="button" id="advancedbutton" onclick="toggleAdvancedInput('advancedsearch')" class="w3-button w3-theme"><i id="advancedinputicon" th:classappend="*{advanced} ? 'fas fa-angle-double-up' : 'fas fa-angle-double-down'"></i>  Advanced</button>
                         <button name="redirectTo" th:value="${redirectTo}" type="submit" class="w3-button w3-theme"><i class="fa fa-search"></i>  Search</button></p>
                 </form>
             </div>
