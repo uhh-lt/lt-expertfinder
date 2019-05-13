@@ -35,7 +35,7 @@ public class SessionController {
     @ModelAttribute("expertQuery")
     public ExpertQuery expertQuery() {
         String topic = "";
-        String method[] = {"inifiniterandomfull", "inifiniterandomfull", "inifiniterandomfull", "inifiniterandomfull"};
+        String method[] = {"inifiniterandomfull", "model2", "globalcitations", "globalhindex"};
         return new ExpertQuery(topic, method, methodService);
     }
 }

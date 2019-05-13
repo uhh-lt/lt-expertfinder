@@ -68,10 +68,6 @@
         <footer class="w3-container w3-theme-d3" th:classappend="${result} or ${graph} or ${results} or ${aanprofile} ? myfooter : myfooter2">
             <p>©2019</p>
         </footer>
-
-        <!--<footer class="w3-container w3-theme-d5" th:classappend="${result} or ${graph} or ${results} or ${aanprofile} ? myfooter : myfooter2">-->
-            <!--&lt;!&ndash;<p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>&ndash;&gt;-->
-        <!--</footer>-->
     </div>
 
     <script th:fragment="scripts">
@@ -161,6 +157,7 @@
             }
 
             calculateOffset();
+            fixFooter();
         }
 
         function sortTable(n, tablename, number) {

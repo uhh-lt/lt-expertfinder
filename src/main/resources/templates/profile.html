@@ -20,7 +20,7 @@
     </style>
 
 </head>
-<body class="w3-theme-l5">
+<body class="w3-theme-l5" onload="fixFooter()">
 
     <!-- Navbar -->
     <div th:replace="fragments/general :: header"></div>
@@ -350,6 +350,6 @@
 
         /*]]>*/
     </script>
-
+    <script th:src="@{/js/footer.js}"></script>
 </body>
 </html>

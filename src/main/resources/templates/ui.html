@@ -12,7 +12,7 @@
     <!--/*/ <th:block th:include="fragments/general :: headerfiles">
             </th:block> /*/-->
 </head>
-<body class="w3-theme-l5">
+<body class="w3-theme-l5" onload="fixFooter()">
 
 <th:block th:object="${result}">
 
@@ -179,6 +179,6 @@
     </script>
 
 </th:block>
-
+<script th:src="@{/js/footer.js}"></script>
 </body>
 </html>
