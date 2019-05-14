@@ -58,22 +58,25 @@ function updateButtons() {
     if(selected.realgroup === 2) {
         citationButtons.style.display = '';
         collaborationButtons.style.display = 'none';
+        var initBias = init_graph.citations[selected.id] !== undefined ? init_graph.citations[selected.id].length : 0;
         var currentCitations = current_graph.citations[selected.id] !== undefined ? current_graph.citations[selected.id].length : 0;
         var maxCitations = data.all_graph.citations[selected.id] !== undefined ? data.all_graph.citations[selected.id].length : 0;
         expandCitations.disabled = !(currentCitations < maxCitations);
-        contractCitations.disabled = !(currentCitations > 0);
+        contractCitations.disabled = !((currentCitations - initBias) > 0);
     } else {
         citationButtons.style.display = 'none';
         collaborationButtons.style.display = '';
+        var initBias = init_graph.collaborations[selected.id] !== undefined ? init_graph.collaborations[selected.id].length : 0;
         var currentCollaborations = current_graph.collaborations[selected.id] !== undefined ? current_graph.collaborations[selected.id].length : 0;
         var maxCollaborations = data.all_graph.collaborations[selected.id] !== undefined ? data.all_graph.collaborations[selected.id].length : 0;
         expandCollaborations.disabled = !(currentCollaborations < maxCollaborations);
-        contractCollaborations.disabled = !(currentCollaborations > 0);
+        contractCollaborations.disabled = !((currentCollaborations - initBias) > 0);
     }
+    var initBias = init_graph.publications[selected.id] !== undefined ? init_graph.publications[selected.id].length : 0;
     var currentPublications = current_graph.publications[selected.id] !== undefined ? current_graph.publications[selected.id].length : 0;
     var maxPublications = data.all_graph.publications[selected.id] !== undefined ? data.all_graph.publications[selected.id].length : 0;
     expandPublications.disabled = !(currentPublications < maxPublications);
-    contractPublications.disabled = !(currentPublications > 0);
+    contractPublications.disabled = !((currentPublications - initBias) > 0);
 }
 
 function select(id, selected) {
@@ -88,31 +91,31 @@ function select(id, selected) {
 }
 
 function expandCitations() {
-    addLinks(data.all_graph.citations[selected.id]);
+    addLinks(selected, data.all_graph.citations[selected.id], true);
     updateButtons();
 }
 
 function contractCitations() {
-    removeLinks(current_graph.citations[selected.id]);
+    removeLinks(selected, current_graph.citations[selected.id], true);
     updateButtons();
 }
 
 function expandCollaborations() {
-    addLinks(data.all_graph.collaborations[selected.id]);
+    addLinks(selected, data.all_graph.collaborations[selected.id], true);
     updateButtons();
 }
 
 function contractCollaborations() {
-    removeLinks(current_graph.collaborations[selected.id]);
+    removeLinks(selected, current_graph.collaborations[selected.id], true);
     updateButtons();
 }
 
 function expandPublications() {
-    addLinks(data.all_graph.publications[selected.id]);
+    addLinks(selected, data.all_graph.publications[selected.id], false);
     updateButtons();
 }
 
 function contractPublications() {
-    removeLinks(current_graph.publications[selected.id]);
+    removeLinks(selected, current_graph.publications[selected.id], false);
     updateButtons();
 }

@@ -107,6 +107,7 @@ function initData() {
         link.weight = all_nodes[link.source].size + all_nodes[link.target].size;
         link.source = all_nodes[link.source];
         link.target = all_nodes[link.target];
+        link.id = link.source.id + "_" + link.target.id;
     });
 
     // create node set from links
@@ -292,7 +293,7 @@ function restart() {
  */
 if(graph !== null) {
     // INITIALIZATION
-    var edges = 50;
+    var edges = 10;
 
     var container = $('.chart-container'),
         width = container.width(),
@@ -307,30 +308,39 @@ if(graph !== null) {
     initZoomBehahviour(svg);
     var node_drag = initDragBehaviour(force);
 
+    // rembember which node added which links
+    var memoryPublications = {};
+    var memoryOther = {};
+
     // build initial state
     // add links
     var init_links = data.all_links.slice(0, Math.min(edges, data.all_links.length));
+    var init_graph = buildGraph(init_links);
+    // var startNode = init_links[0].source.weight > init_links[0].target.weight ? init_links[0].source : init_links[0].target;
     var links = [];
     //add Nodes
     var nodes = [];
     var current_graph;
+    // addLinks(startNode, init_links);
     init_links.forEach(function(link) {
         if(nodes.indexOf(link.source) === -1 ) {
             console.log("SOURCE NODE DOES NOT EXIST!!!");
             nodes.push(link.source);
-            addAllCurrentLinks(link.source);
+            addAllCurrentLinks(link.source, []);
         }
         if(nodes.indexOf(link.target) === -1 ) {
             console.log("TARGET NODE DOES NOT EXIST!!!");
             nodes.push(link.target);
-            addAllCurrentLinks(link.target);
+            addAllCurrentLinks(link.target, []);
         }
     });
 
     updateLayout();
 }
 
-function addLinks(linksToAdd) {
+function addLinks(selectedNode, linksToAdd, isOther) {
+    var addedLinks = [];
+
     // add all links
     linksToAdd.forEach(function(link) {
         var linkIndex = links.indexOf(link);
@@ -341,31 +351,73 @@ function addLinks(linksToAdd) {
             if(nodes.indexOf(link.source) === -1 ) {
                 console.log("SOURCE NODE DOES NOT EXIST!!!");
                 nodes.push(link.source);
-                addAllCurrentLinks(link.source);
+                addAllCurrentLinks(link.source, addedLinks);
                 addedLink = true;
             }
             if(nodes.indexOf(link.target) === -1 ) {
                 console.log("TARGET NODE DOES NOT EXIST!!!");
                 nodes.push(link.target);
-                addAllCurrentLinks(link.target);
+                addAllCurrentLinks(link.target, addedLinks);
                 addedLink = true
             }
             if(addedLink === false) {
                 // add link
                 links.push(link);
+                addedLinks.push(link);
                 // update link count of affected links
                 nodes[nodes.indexOf(link.target)].links += 1;
                 nodes[nodes.indexOf(link.source)].links += 1;
             }
         }
     });
+
+    if(isOther) {
+        // add added links to memory;
+        if(memoryOther[selectedNode.id] === undefined) {
+            memoryOther[selectedNode.id] = new Set(addedLinks);
+        } else {
+            addedLinks.forEach(link => memoryOther[selectedNode.id].add(link))
+        }
+
+    } else {
+        // add added links to memory;
+        if(memoryPublications[selectedNode.id] === undefined) {
+            memoryPublications[selectedNode.id] = new Set(addedLinks);
+        } else {
+            addedLinks.forEach(link => memoryPublications[selectedNode.id].add(link))
+        }
+    }
+
     updateLayout();
 }
 
-function removeLinks(linksToRemove) {
+function removeLinks(selectedNode, linksToRemove, isOther) {
+    // 2 possibilities:
+    // either, remove all links that were previously added and are stored in memory
+    // or, remove the remaining links of the selectedNode of the respective type (citation, publication, collaboration)
 
+    // selected Node has memory -> first possibility!
+    if(isOther && memoryOther[selectedNode.id] !== undefined && memoryOther[selectedNode.id].size > 0) {
+            removeLinksHelper(Array.from(memoryOther[selectedNode.id]));
+            memoryOther[selectedNode.id] = new Set();
+    }
+    // selected Node has memory -> first possibility!
+    else if (!isOther && memoryPublications[selectedNode.id] !== undefined && memoryPublications[selectedNode.id].size > 0) {
+            removeLinksHelper(Array.from(memoryPublications[selectedNode.id]));
+            memoryPublications[selectedNode.id] = new Set();
+    }
+    // selected Node has no memory -> second possibility!
+    else {
+        removeLinksHelper(linksToRemove);
+    }
+}
+
+function removeLinksHelper(linksToRemove) {
     // remove all links
     linksToRemove.forEach(function(link) {
+        if(init_links.indexOf(link) !== -1)
+            return;
+
         var linkIndex = links.indexOf(link);
         if(linkIndex !== -1) {
 
@@ -402,18 +454,18 @@ function search() {
     updateLayout();
 }
 
-function addAllCurrentLinks(newnode) {
+function addAllCurrentLinks(newnode, addedLinks) {
     if(data.all_graph.hasPublications && data.all_graph.publications[newnode.id] !== undefined)
-        data.all_graph.publications[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink);});
+        data.all_graph.publications[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink, addedLinks);});
 
     if(newnode.realgroup === 2 && data.all_graph.hasCitations && data.all_graph.citations[newnode.id] !== undefined) {
-        data.all_graph.citations[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink);});
+        data.all_graph.citations[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink, addedLinks);});
     } else if (newnode.realgroup === 1 && data.all_graph.hasCollaborations && data.all_graph.collaborations[newnode.id] !== undefined) {
-        data.all_graph.collaborations[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink);});
+        data.all_graph.collaborations[newnode.id].forEach(function(alllink) {subAddAll(newnode, alllink, addedLinks);});
     }
 }
 
-function subAddAll(newnode, alllink) {
+function subAddAll(newnode, alllink, addedLinks) {
     var t = nodes.indexOf(alllink.target);
     var s = nodes.indexOf(alllink.source);
 
@@ -421,6 +473,7 @@ function subAddAll(newnode, alllink) {
         (alllink.target === newnode && s !== -1)) {
         // add link
         links.push(alllink);
+        addedLinks.push(alllink);
 
         // update link count of affected links
         nodes[t].links += 1;
