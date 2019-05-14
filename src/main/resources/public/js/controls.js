@@ -63,6 +63,11 @@ function updateButtons() {
         var maxCitations = data.all_graph.citations[selected.id] !== undefined ? data.all_graph.citations[selected.id].length : 0;
         expandCitations.disabled = !(currentCitations < maxCitations);
         contractCitations.disabled = !((currentCitations - initBias) > 0);
+        if((selected.links === 1 && currentCitations === 1) || (memoryOther[selected.id] !== undefined && memoryOther[selected.id].length === currentCitations)) {
+            contractCitations.firstChild.classList.replace("fa-minus", "fa-trash")
+        } else {
+            contractCitations.firstChild.classList.replace("fa-trash", "fa-minus")
+        }
     } else {
         citationButtons.style.display = 'none';
         collaborationButtons.style.display = '';
@@ -71,12 +76,23 @@ function updateButtons() {
         var maxCollaborations = data.all_graph.collaborations[selected.id] !== undefined ? data.all_graph.collaborations[selected.id].length : 0;
         expandCollaborations.disabled = !(currentCollaborations < maxCollaborations);
         contractCollaborations.disabled = !((currentCollaborations - initBias) > 0);
+        if((selected.links === 1 && currentCollaborations === 1) || (memoryOther[selected.id] !== undefined && memoryOther[selected.id].length === currentCollaborations)) {
+            contractCollaborations.firstChild.classList.replace("fa-minus", "fa-trash")
+        } else {
+            contractCollaborations.firstChild.classList.replace("fa-trash", "fa-minus")
+        }
     }
     var initBias = init_graph.publications[selected.id] !== undefined ? init_graph.publications[selected.id].length : 0;
     var currentPublications = current_graph.publications[selected.id] !== undefined ? current_graph.publications[selected.id].length : 0;
     var maxPublications = data.all_graph.publications[selected.id] !== undefined ? data.all_graph.publications[selected.id].length : 0;
     expandPublications.disabled = !(currentPublications < maxPublications);
     contractPublications.disabled = !((currentPublications - initBias) > 0);
+
+    if((selected.links === 1 && currentPublications === 1) || (memoryPublications[selected.id] !== undefined && memoryPublications[selected.id].length === currentPublications)) {
+        contractPublications.firstChild.classList.replace("fa-minus", "fa-trash")
+    } else {
+        contractPublications.firstChild.classList.replace("fa-trash", "fa-minus")
+    }
 }
 
 function select(id, selected) {
