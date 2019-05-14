@@ -71,6 +71,9 @@ public class GraphController extends SessionController {
         }
         Gson gson = new Gson();
         DefaultRequest defaultRequest = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), method.getRequestObject().getClass());
+
+        model.addAttribute("graphsize", defaultRequest.getResults());
+
         expertRetrievalResult = expertRetrieval.findExperts(expertTopic, expertQuery.getMethod()[0], defaultRequest);
 
         Map<String, Double> expertRelevanceMap = expertRetrievalResult.getExpertResultList();

@@ -293,7 +293,7 @@ function restart() {
  */
 if(graph !== null) {
     // INITIALIZATION
-    var edges = 10;
+    var edges = graphsize;
 
     var container = $('.chart-container'),
         width = container.width(),
@@ -315,25 +315,29 @@ if(graph !== null) {
     // build initial state
     // add links
     var init_links = data.all_links.slice(0, Math.min(edges, data.all_links.length));
-    var init_graph = buildGraph(init_links);
     // var startNode = init_links[0].source.weight > init_links[0].target.weight ? init_links[0].source : init_links[0].target;
     var links = [];
     //add Nodes
     var nodes = [];
     var current_graph;
     // addLinks(startNode, init_links);
+    var initAddedLinks = [];
     init_links.forEach(function(link) {
         if(nodes.indexOf(link.source) === -1 ) {
             console.log("SOURCE NODE DOES NOT EXIST!!!");
             nodes.push(link.source);
-            addAllCurrentLinks(link.source, []);
+            addAllCurrentLinks(link.source, initAddedLinks);
         }
         if(nodes.indexOf(link.target) === -1 ) {
             console.log("TARGET NODE DOES NOT EXIST!!!");
             nodes.push(link.target);
-            addAllCurrentLinks(link.target, []);
+            addAllCurrentLinks(link.target, initAddedLinks);
         }
     });
+    console.log("init addedLinks");
+    console.log(initAddedLinks);
+    init_links = initAddedLinks;
+    var init_graph = buildGraph(init_links);
 
     updateLayout();
 }
