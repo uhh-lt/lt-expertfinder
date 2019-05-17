@@ -37,10 +37,10 @@
             <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
                 <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
                 <a th:href="@{/ui/reset}" ><span class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fas fa-chalkboard-teacher w3-margin-right"></i>LT Expert Finder</span></a>
-                <a th:href="@{/ui}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="View a ranked list of Experts"><i class="fas fa-list-ol"></i> List</a>
-                <a th:href="@{/graph}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Get an insight into the data"><i class="fa fa-project-diagram"></i> Graph</a>
-                <a th:href="@{/table}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Compare different Expert Retrieval Methods"><i class="fa fa-chart-bar"></i> Evaluation</a>
-                <a th:href="@{/about}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Information about LT-Expertfinder"><i class="fas fa-info-circle"></i> About</a>
+                <a th:href="@{/ui}" th:classappend="${#httpServletRequest.getRequestURI().endsWith('/ui') ? 'w3-theme-l1':''}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="View a ranked list of Experts"><i class="fas fa-list-ol"></i> List</a>
+                <a th:href="@{/graph}" th:classappend="${#httpServletRequest.getRequestURI().endsWith('/graph') ? 'w3-theme-l1':''}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Get an insight into the data"><i class="fa fa-project-diagram"></i> Graph</a>
+                <a th:href="@{/table}" th:classappend="${#httpServletRequest.getRequestURI().endsWith('/table') ? 'w3-theme-l1':''}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Compare different Expert Retrieval Methods"><i class="fa fa-chart-bar"></i> Evaluation</a>
+                <a th:href="@{/about}" th:classappend="${#httpServletRequest.getRequestURI().endsWith('/about') ? 'w3-theme-l1':''}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Information about LT-Expertfinder"><i class="fas fa-info-circle"></i> About</a>
                 <form th:if="${expertQuery}" id="expertsearchbar" class="w3-right w3-hide-small" action="#" th:action="@{/postExpertQuery}" th:object="${expertQuery}" method="post">
                     <input type="text" class="w3-bar-item w3-input w3-padding-large" placeholder="Search.." th:field="${expertQuery.topic}">
                     <button class="w3-bar-item w3-button w3-padding-large w3-theme-d4" name="redirectTo" th:value="${redirectTo}" type="submit"><i class="fa fa-search"></i></button>
@@ -186,13 +186,13 @@
                     if (dir == "asc") {
                         if(number) {
                             //check if the two rows should switch place:
-                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                            if (Number(x.innerText) > Number(y.innerText)) {
                                 //if so, mark as a switch and break the loop:
                                 shouldSwitch = true;
                                 break;
                             }
                         } else {
-                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
                                 //if so, mark as a switch and break the loop:
                                 shouldSwitch= true;
                                 break;
@@ -201,13 +201,13 @@
                     } else if (dir == "desc") {
                         if(number) {
                             //check if the two rows should switch place:
-                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                            if (Number(x.innerText) < Number(y.innerText)) {
                                 //if so, mark as a switch and break the loop:
                                 shouldSwitch = true;
                                 break;
                             }
                         } else {
-                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            if (x.innerText.toLowerCase() < y.innerText.toLowerCase()) {
                                 //if so, mark as a switch and break the loop:
                                 shouldSwitch = true;
                                 break;

@@ -36,9 +36,9 @@
                     <span th:onclick="'hide(\'all-collaborations\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
                     <h3 th:text="'All Collaborators of ' + ${#strings.capitalizeWords(aanprofile.name)}"></h3>
                     <table id="collaboration-table-modal" class="w3-table-all w3-hoverable" style="margin-bottom: 16px;">
-                        <tr class="w3-theme">
-                            <th onclick="sortTable(0, 'collaboration-table-modal', false)">Name</th>
-                            <th onclick="sortTable(1, 'collaboration-table-modal', true)">Count</th>
+                        <tr class="w3-theme" style="white-space: nowrap;">
+                            <th onclick="sortTable(0, 'collaboration-table-modal', false)">Name <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1, 'collaboration-table-modal', true)">Count <i class="fas fa-sort"></i></th>
                         </tr>
                         <tr th:each="collaboration : ${aanprofile.collaborations}" th:onclick="'window.location.href = \'' + @{/profile/{id}(id=${collaboration.id})} + '\''">
                             <td th:text="${#strings.capitalizeWords(collaboration.name)}"></td>
@@ -56,12 +56,12 @@
                     <span th:onclick="'hide(\'all-publications\');'" class="w3-button w3-theme w3-display-topright">&times;</span>
                     <h3 th:text="'All Publications of ' + ${#strings.capitalizeWords(aanprofile.name)}"></h3>
                     <table id="publication-table-modal" class="w3-table-all w3-hoverable" style="margin-bottom: 16px;">
-                        <tr class="w3-theme">
-                            <th onclick="sortTable(0, 'publication-table-modal', false)">File</th>
-                            <th onclick="sortTable(1, 'publication-table-modal', false)">Title</th>
-                            <th onclick="sortTable(2, 'publication-table-modal', true)">Year</th>
-                            <th onclick="sortTable(3, 'publication-table-modal', false)">Venue</th>
-                            <th onclick="sortTable(4, 'publication-table-modal', true)">Citations</th>
+                        <tr class="w3-theme" style="white-space: nowrap;">
+                            <th onclick="sortTable(0, 'publication-table-modal', false)">File <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1, 'publication-table-modal', false)">Title <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2, 'publication-table-modal', true)">Year <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3, 'publication-table-modal', false)">Venue <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4, 'publication-table-modal', true)">Citations <i class="fas fa-sort"></i></th>
                         </tr>
                         <tr th:each="publication, iter : ${aanprofile.publications}" th:onclick="'window.location=\'http://aclweb.org/anthology/' + ${publication.file} + '.pdf\';'">
                             <td th:text="${publication.file}"></td>
@@ -92,12 +92,12 @@
             <div class="w3-card w3-round w3-white" style="margin-top: 16px;">
                 <div>
                     <table id="publication-table" class="evaluation-table w3-table-all w3-hoverable">
-                        <tr class="w3-theme">
-                            <th style="width: 100px;" onclick="sortTable(0, 'publication-table', false)">File</th>
-                            <th onclick="sortTable(1, 'publication-table', false)">Title</th>
-                            <th onclick="sortTable(2, 'publication-table', true)">Year</th>
-                            <th onclick="sortTable(3, 'publication-table', false)">Venue</th>
-                            <th onclick="sortTable(4, 'publication-table', true)">Citations</th>
+                        <tr class="w3-theme" style="white-space: nowrap;">
+                            <th style="width: 100px;" onclick="sortTable(0, 'publication-table', false)">File <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1, 'publication-table', false)">Title <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2, 'publication-table', true)">Year <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3, 'publication-table', false)">Venue <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4, 'publication-table', true)">Citations <i class="fas fa-sort"></i></th>
                         </tr>
                         <tr th:each="publication, iter : ${aanprofile.publications.subList(0, T(Math).min(aanprofile.publications.size(), 10))}" th:classappend="'rownumber'+${iter.index / 10}">
                             <td><a th:text="${publication.file}" th:href="'http://aclweb.org/anthology/' + ${publication.file} + '.pdf'" target="_blank" style="display:block; text-decoration: none;"></a></td>
@@ -122,7 +122,7 @@
                 <div class="w3-container w3-padding" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
 
                     <table class="w3-table">
-                        <tr class="w3-theme">
+                        <tr class="w3-theme" style="white-space: nowrap;">
                             <th></th>
                             <th>AAN</th>
                             <th th:if="${googleprofile != null}">Scholar</th>
@@ -152,9 +152,9 @@
             <div class="w3-card w3-round w3-white">
                 <div style="margin-top: 16px;">
                     <table id="collaboration-table" class="evaluation-table w3-table-all w3-hoverable">
-                        <tr class="w3-theme">
-                            <th onclick="sortTable(0, 'collaboration-table', false)">Collaborators</th>
-                            <th onclick="sortTable(1, 'collaboration-table', true)">Count</th>
+                        <tr class="w3-theme" style="white-space: nowrap;">
+                            <th onclick="sortTable(0, 'collaboration-table', false)">Collaborators <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1, 'collaboration-table', true)">Count <i class="fas fa-sort"></i></th>
                         </tr>
                         <tr th:each="collaboration : ${aanprofile.collaborations.subList(0, T(Math).min(aanprofile.collaborations.size(), 10))}" th:onclick="'window.location.href = \'' + @{/profile/{id}(id=${collaboration.id})} + '\''">
                             <td th:text="${#strings.capitalizeWords(collaboration.name)}"></td>
@@ -171,7 +171,7 @@
         <div th:if="${wikiprofile != null && wikiprofile.size() > 0}" class="w3-col m12">
             <div style="margin-top: 16px;">
                 <table id="wikidata-table" class="evaluation-table w3-table-all w3-hoverable" style="margin-bottom: 16px;">
-                    <tr class="w3-theme">
+                    <tr class="w3-theme" style="white-space: nowrap;">
                         <th>awards</th>
                         <!--<th>birthday</th>-->
                         <!--<th>countires</th>-->

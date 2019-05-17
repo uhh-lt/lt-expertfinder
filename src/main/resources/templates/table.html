@@ -86,10 +86,10 @@
                             <!-- Left Column -->
                             <div>
                                 <table th:id="'modal-table-'+${j}+'m'+${expert.id}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
-                                    <tr class="w3-theme">
-                                        <th style="width: 110px;" th:onclick="'sortTable(0, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">File</th>
-                                        <th th:onclick="'sortTable(1, \'modal-table-'+${j}+'m'+${expert.id}+'\', true)'">Relevance</th>
-                                        <th th:onclick="'sortTable(2, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">Title</th>
+                                    <tr class="w3-theme" style="white-space: nowrap;">
+                                        <th style="width: 110px;" th:onclick="'sortTable(0, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">File <i class="fas fa-sort"></i></th>
+                                        <th th:onclick="'sortTable(1, \'modal-table-'+${j}+'m'+${expert.id}+'\', true)'">Relevance <i class="fas fa-sort"></i></th>
+                                        <th th:onclick="'sortTable(2, \'modal-table-'+${j}+'m'+${expert.id}+'\', false)'">Title <i class="fas fa-sort"></i></th>
                                     </tr>
                                     <tr th:each="item : ${expert.documents}">
                                         <td th:inline="text">

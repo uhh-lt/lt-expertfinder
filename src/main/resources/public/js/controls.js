@@ -27,6 +27,7 @@ function handleControls(d) {
 
 function updateControls() {
     var title = document.getElementById("control-title");
+    var subtitle = document.getElementById("control-subtitle");
     var link = document.getElementById("control-link");
     var publicationsname = document.getElementById("publications-name");
 
@@ -42,6 +43,7 @@ function updateControls() {
         publicationsname.textContent = "Documents:"
     }
     title.textContent = selected.realgroup == 2 ? selected.id : selected.description;
+    subtitle.textContent = selected.realgroup == 2 ? selected.description : "";
     updateButtons();
 }
 

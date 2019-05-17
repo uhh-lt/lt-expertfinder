@@ -17,62 +17,100 @@
 <div th:include="fragments/general :: header" th:with="redirectTo='graph'"></div>
 
 <!-- Page Container -->
-<div class="w3-container w3-content" style="max-width:100%;margin-top:80px">
+<div class="w3-container w3-content chart-container" style="max-width:100%;margin-top:80px; position: relative;">
 
     <!-- The Grid -->
-    <div style="max-width: 1400px;margin: auto; padding-left:16px; padding-right:16px;" th:include="fragments/search :: expertSearchForm" th:with="redirectTo='graph', showMethod=true"></div>
+    <div th:styleappend="${graph != null ? 'position:absolute; top:0; left:0; right:0' : ''}" style="max-width: 1400px;margin: auto; padding-left:16px; padding-right:16px;" th:include="fragments/search :: expertSearchForm" th:with="redirectTo='graph', showMethod=true"></div>
 
-    <div id="searchresult" th:if="${graph}" class="chart-container" style="position:relative;">
-        <div class="w3-left w3-card w3-round w3-white" style="position:absolute; margin-top:16px;">
-            <div class="w3-container w3-padding">
-                <input style="margin: 10px 0; display: inline-block; padding: 7px;" class="w3-border" type="text" id="search">
-                <button onclick="search()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-highlighter"></i> Highlight</button>
-            </div>
+    <div th:if="${graph}" class="w3-left w3-card w3-round w3-white" style="position:absolute;">
+        <div class="w3-container w3-padding">
+            <input style="margin: 10px 0; display: inline-block; padding: 7px;" class="w3-border" type="text" id="search">
+            <button onclick="search()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-highlighter"></i> Highlight</button>
         </div>
-
-        <div class="w3-left w3-card w3-round w3-white" style="position:absolute; margin-top:106px; display:none;" id="controls">
-            <div class="w3-container w3-padding">
-                <span onclick="closeControls()" style="border-top-right-radius: 4px;" class="w3-button w3-theme w3-display-topright">&times;</span>
-                <a id="control-link" target="_blank" th:href="@{/profile}"><h4 id="control-title" style="margin-bottom: 10px; margin-top: 0px; width: 180px;"></h4></a>
-                <table>
-                    <tr id="control-collaborations">
-                        <td style="width:55%">Authors:</td>
-                        <td><button id="expand-collaborations" onclick="expandCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
-                        <td><button id="contract-collaborations" onclick="contractCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
-                    </tr>
-                    <tr id="control-publications">
-                        <td id="publications-name" style="width:55%">Publications:</td>
-                        <td><button id="expand-publications" onclick="expandPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
-                        <td><button id="contract-publications" onclick="contractPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
-                    </tr>
-                    <tr id="control-citations">
-                        <td style="width:55%">Documents:</td>
-                        <td><button id="expand-citations" onclick="expandCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
-                        <td><button id="contract-citations" onclick="contractCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
-                    </tr>
-
-                </table>
-            </div>
-        </div>
-
-        <svg width="1600" height="900" style="margin-top: 16px;">
-            <defs></defs>
-        </svg>
     </div>
+
+    <div th:if="${graph}" class="w3-card w3-round w3-white" style="position:absolute; right:16px;">
+        <div class="w3-container w3-padding">
+            <h4 style="margin:0;">Legend</h4>
+            <svg width="200" height="200">
+                <defs>
+                    <marker id="mcollaboration" viewBox="0 -5 10 10" refX="0" refY="0" markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                        <path d="M0,-5L10,0L0,5"></path>
+                    </marker>
+                    <marker id="mauthorship" viewBox="0 -5 10 10" refX="0" refY="0" markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                        <path d="M0,-5L10,0L0,5"></path></marker>
+                    <marker id="mcitation" viewBox="0 -5 10 10" refX="0" refY="0" markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                        <path d="M0,-5L10,0L0,5"></path>
+                    </marker>
+                </defs>
+                <g transform="translate(0,0)scale(1)">
+                    <path d="M140,40L50,40" marker-end="url(#mauthorship)" marker-start="url(#mauthorship)" stroke-width="2" stroke="#666"></path>
+                    <a transform="translate(160,40)"><circle r="15" fill="#04B404"></circle></a>
+                    <a transform="translate(30,40)"><circle r="15" fill="#0174DF"></circle></a>
+                    <text transform="translate(58,35)" style="font-size: 16px;">Publication</text>
+                    <text transform="translate(8, 20)" style="font-size: 14px;">Author</text>
+                    <text transform="translate(130, 20)" style="font-size: 14px;">Document</text>
+
+                    <path d="M145,110L50,110" marker-end="url(#mcitation)" stroke-width="2" stroke="#666"></path>
+                    <a transform="translate(160,110)"><circle r="15" fill="#04B404"></circle></a>
+                    <a transform="translate(30,110)"><circle r="15" fill="#04B404"></circle></a>
+                    <text transform="translate(70,105)" style="font-size: 16px;">Citation</text>
+                    <text transform="translate(0, 90)" style="font-size: 14px;">Document</text>
+                    <text transform="translate(130, 90)" style="font-size: 14px;">Document</text>
+
+                    <path d="M140,180L50,180" marker-end="url(#mcollaboration)" marker-start="url(#mcollaboration)" stroke-width="2" stroke="#666"></path>
+                    <a transform="translate(160,180)"><circle r="15" fill="#0174DF"></circle></a>
+                    <a transform="translate(30,180)"><circle r="15" fill="#0174DF"></circle></a>
+                    <text transform="translate(48,175)" style="font-size: 16px;">Collaboration</text>
+                    <text transform="translate(8, 160)" style="font-size: 14px;">Author</text>
+                    <text transform="translate(140, 160)" style="font-size: 14px;">Author</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div th:if="${graph}" class="w3-left w3-card w3-round w3-white" style="position:absolute; margin-top:106px; display:none;" id="controls">
+        <div class="w3-container w3-padding">
+            <span onclick="closeControls()" style="border-top-right-radius: 4px;" class="w3-button w3-theme w3-display-topright">&times;</span>
+            <a id="control-link" target="_blank" th:href="@{/profile}"><h4 id="control-title" style="margin-bottom: 10px; margin-top: 0px; width: 180px;"></h4></a>
+            <p id="control-subtitle" style="width: 221px; font-size: 9pt; margin:0;"></p>
+            <table>
+                <tr id="control-collaborations">
+                    <td style="width:55%">Authors:</td>
+                    <td><button id="expand-collaborations" onclick="expandCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                    <td><button id="contract-collaborations" onclick="contractCollaborations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                </tr>
+                <tr id="control-publications">
+                    <td id="publications-name" style="width:55%">Publications:</td>
+                    <td><button id="expand-publications" onclick="expandPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                    <td><button id="contract-publications" onclick="contractPublications()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                </tr>
+                <tr id="control-citations">
+                    <td style="width:55%">Documents:</td>
+                    <td><button id="expand-citations" onclick="expandCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-plus"></i></button></td>
+                    <td><button id="contract-citations" onclick="contractCitations()" class="w3-button w3-theme" style="margin-bottom: 5px;"><i class="fas fa-minus"></i></button></td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+    <svg th:if="${graph}" id="svg" width="1" height="1">
+        <defs></defs>
+    </svg>
 
     <!-- End Page Container -->
 </div>
-
-<br>
 
 <!-- Footer -->
 <script th:replace="fragments/general :: multiplemethodsscript"></script>
 <div th:replace="fragments/general :: footer"></div>
 <script th:replace="fragments/general :: scripts"></script>
-<script th:replace="fragments/general :: scrollscript"></script>
+<!--<script th:replace="fragments/general :: scrollscript"></script>-->
 <script th:inline="javascript">
     /*<![CDATA[*/
     var graph = /*[[${graph}]]*/ null;
+    var query = /*[[${expertQuery.topic}]]*/ null;
     var graphsize = /*[[${graphsize}]]*/ 1;
     /*]]>*/
 </script>

@@ -25,7 +25,7 @@ function initMarkers() {
 }
 
 function initSvg(width, height) {
-    var svg = d3.select("svg")
+    var svg = d3.select("#svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -83,6 +83,7 @@ function initDragBehaviour(force) {
 
     function dragend(d, i) {
         d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+        // TODO: save graph here?
         tick();
         force.resume();
     }
@@ -90,24 +91,45 @@ function initDragBehaviour(force) {
     return node_drag;
 }
 
-function initData() {
+function initData(width, height, saved_nodes, active_nodes, active_links, saved_memory_other, saved_memory_publications, saved_init_links) {
     var all_nodes = {};
-    graph.nodes.forEach(function(node) {
-        all_nodes[node.id] = node;
-        all_nodes[node.id].links = 0;
-        all_nodes[node.id].realgroup = node.group;
-        all_nodes[node.id].x = 0;
-        all_nodes[node.id].y = 0;
-        all_nodes[node.id].px = 0;
-        all_nodes[node.id].py = 0;
-    });
+    var minwidth = width/4;
+    var maxwidth = minwidth + width/2;
+    var minheight = height/4;
+    var maxheight = minheight + height/2;
+    if(saved_nodes !== null && saved_nodes !== undefined) {
+        graph.nodes.forEach(function(node) {
+            all_nodes[node.id] = node;
+            all_nodes[node.id].links = saved_nodes[node.id].links;
+            all_nodes[node.id].realgroup = node.group;
+            all_nodes[node.id].x = saved_nodes[node.id].x;
+            all_nodes[node.id].y = saved_nodes[node.id].y;
+            all_nodes[node.id].px = saved_nodes[node.id].px;
+            all_nodes[node.id].py = saved_nodes[node.id].py;
+            all_nodes[node.id].fixed = saved_nodes[node.id].fixed;
+        });
+    } else {
+        graph.nodes.forEach(function(node) {
+            all_nodes[node.id] = node;
+            all_nodes[node.id].links = 0;
+            all_nodes[node.id].realgroup = node.group;
+            all_nodes[node.id].x = getRandomInt(minwidth, maxwidth);
+            all_nodes[node.id].y = getRandomInt(minheight, maxheight);
+            all_nodes[node.id].px = all_nodes[node.id].x;
+            all_nodes[node.id].py = all_nodes[node.id].y;
+            all_nodes[node.id].fixed = false;
+        });
+    }
 
+
+    var link_map = {};
     var all_links = graph.links;
     all_links.forEach(function(link) {
         link.weight = all_nodes[link.source].size + all_nodes[link.target].size;
         link.source = all_nodes[link.source];
         link.target = all_nodes[link.target];
         link.id = link.source.id + "_" + link.target.id;
+        link_map[link.id] = link;
     });
 
     // create node set from links
@@ -126,6 +148,46 @@ function initData() {
     all_links.sort(function(a, b) {
         return b.weight - a.weight;
     });
+
+    if(active_nodes !== null && active_nodes !== undefined) {
+        active_nodes.forEach(function(node) {
+           nodes.push(all_nodes[node]);
+        });
+    }
+
+    if(active_links !== null && active_links !== undefined) {
+        active_links.forEach(function(link) {
+            links.push(link_map[link]);
+        });
+    }
+
+    if(saved_memory_other !== null && saved_memory_other !== undefined) {
+        for (var key in saved_memory_other) {
+            if (memoryOther[key] === undefined) {
+                memoryOther[key] = new Set();
+            }
+            saved_memory_other[key].forEach(function(link_id) {
+                memoryOther[key].add(link_map[link_id]);
+            });
+        }
+    }
+
+    if(saved_memory_publications !== null && saved_memory_publications !== undefined) {
+        for (var key in saved_memory_publications) {
+            if (memoryPublications[key] === undefined) {
+                memoryPublications[key] = new Set();
+            }
+            saved_memory_publications[key].forEach(function(link_id) {
+                memoryPublications[key].add(link_map[link_id]);
+            });
+        }
+    }
+
+    if(saved_init_links !== null && saved_init_links !== undefined) {
+        saved_init_links.forEach(function(link_id){
+            init_links.push(link_map[link_id])
+        })
+    }
 
     var all_graph = buildGraph(all_links);
     return {all_nodes: n, all_links: all_links, all_graph: all_graph};
@@ -228,6 +290,7 @@ function updateLayout() {
     links = force.links();
     nodes = force.nodes();
     current_graph = buildGraph(links);
+    saveGraph();
     restart();
 }
 
@@ -288,19 +351,36 @@ function restart() {
     force.start();
 }
 
+window.addEventListener('resize', setSvgSize);
+function setSvgSize() {
+    var docheight = window.innerHeight
+        || document.documentElement.clientHeight
+        || document.body.clientHeight;
+
+
+    var container = $('.chart-container'),
+        width = container.width(),
+        // height = container.height();
+        height = docheight - 133;
+
+    svg.attr("width", width)
+        .attr("height", height);
+}
+
 /*
 ----------------- MAIN -----------------
  */
 if(graph !== null) {
     // INITIALIZATION
-    var edges = graphsize;
-
+    var docheight = window.innerHeight
+        || document.documentElement.clientHeight
+        || document.body.clientHeight;
     var container = $('.chart-container'),
         width = container.width(),
-        height = container.height();
+        // height = container.height();
+        height = docheight - 133 - 16;
     var colors = initColors();
     initMarkers();
-    var data = initData();
     var canvas = initSvg(width, height);
     var force = initForceLayout([], [], width, height);
     var svg = canvas.svg,
@@ -308,18 +388,33 @@ if(graph !== null) {
     initZoomBehahviour(svg);
     var node_drag = initDragBehaviour(force);
 
-    // rembember which node added which links
+
+    var data = {};
     var memoryPublications = {};
     var memoryOther = {};
+    var init_links = [];
+    var links = [];
+    var nodes = [];
+    var current_graph = {};
+    var init_graph;
+    if(localStorage['query'] !== undefined && query === localStorage['query']) {
+        console.log("Loading graph...");
+        loadGraph();
+        console.log("Graph loaded! :)")
+    } else {
+        initGraph();
+    }
 
+    init_graph = buildGraph(init_links);
+    updateLayout();
+}
+
+function initGraph() {
+    data = initData(width, height);
     // build initial state
     // add links
-    var init_links = data.all_links.slice(0, Math.min(edges, data.all_links.length));
+    init_links = data.all_links.slice(0, Math.min(graphsize, data.all_links.length));
     // var startNode = init_links[0].source.weight > init_links[0].target.weight ? init_links[0].source : init_links[0].target;
-    var links = [];
-    //add Nodes
-    var nodes = [];
-    var current_graph;
     // addLinks(startNode, init_links);
     var initAddedLinks = [];
     init_links.forEach(function(link) {
@@ -337,9 +432,65 @@ if(graph !== null) {
     console.log("init addedLinks");
     console.log(initAddedLinks);
     init_links = initAddedLinks;
-    var init_graph = buildGraph(init_links);
+}
 
-    updateLayout();
+function loadGraph() {
+    query = localStorage['query'];
+    var saved_nodes = JSON.parse(localStorage['saved_nodes']);
+    var active_links = JSON.parse(localStorage['active_links']);
+    var active_nodes = JSON.parse(localStorage['active_nodes']);
+    var saved_memory_other = JSON.parse(localStorage['saved_memory_other']);
+    var saved_memory_publications = JSON.parse(localStorage['saved_memory_publications']);
+    var saved_init_links = JSON.parse(localStorage['saved_init_links']);
+    data = initData(width, height, saved_nodes, active_nodes, active_links, saved_memory_other, saved_memory_publications, saved_init_links);
+}
+
+function saveGraph() {
+
+    // save node positions
+    var saved_nodes = {};
+    graph.nodes.forEach(function(node) {
+        saved_nodes[node.id] = node;
+    });
+
+    var active_links = [];
+    links.forEach(function(link) {
+       active_links.push(link.id);
+    });
+
+    var active_nodes = [];
+    nodes.forEach(function(node) {
+       active_nodes.push(node.id);
+    });
+
+    var saved_memory_other = {};
+    for(var key in memoryOther) {
+        saved_memory_other[key] = [];
+        for(var value of memoryOther[key].entries()) {
+            saved_memory_other[key].push(value[0].id);
+        }
+    }
+
+    var saved_memory_publications = {};
+    for(var key in memoryPublications) {
+        saved_memory_publications[key] = [];
+        for(var value of memoryPublications[key].entries()) {
+            saved_memory_publications[key].push(value[0].id);
+        }
+    }
+
+    var saved_init_links = [];
+    init_links.forEach(function (link) {
+       saved_init_links.push(link.id);
+    });
+
+    localStorage['query'] = query;
+    localStorage['saved_nodes'] = JSON.stringify(saved_nodes);
+    localStorage['active_links'] = JSON.stringify(active_links);
+    localStorage['active_nodes'] = JSON.stringify(active_nodes);
+    localStorage['saved_memory_other'] = JSON.stringify(saved_memory_other);
+    localStorage['saved_memory_publications'] = JSON.stringify(saved_memory_publications);
+    localStorage['saved_init_links'] = JSON.stringify(saved_init_links);
 }
 
 function addLinks(selectedNode, linksToAdd, isOther) {
@@ -444,7 +595,7 @@ function removeLinksHelper(linksToRemove) {
 function search() {
 
     console.log(document.getElementById('search').value);
-    var patt = new RegExp(".*"+document.getElementById('search').value+".*");
+    var patt = new RegExp(".*"+document.getElementById('search').value.toLowerCase()+".*");
 
     nodes.forEach(function(node) {
         node.group = data.all_nodes[node.id].realgroup;
@@ -483,4 +634,17 @@ function subAddAll(newnode, alllink, addedLinks) {
         nodes[t].links += 1;
         nodes[s].links += 1;
     }
+}
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

@@ -62,7 +62,7 @@ public class ElasticSearchService {
 
     // model graph aan
     public MyResult getDocumentIdsByTopicAAN(String topic) {
-        String[] topics = topic.split(" |-");
+        String[] topics = topic.split(" ");
 
         StringBuilder newTopic = new StringBuilder();
         for(String t : topics) {
@@ -165,7 +165,7 @@ public class ElasticSearchService {
 
     // model elastic
     public ScoredDocumentResult getScoredDocumentsForTopic(String topic) {
-        String[] topics = topic.split(" |-");
+        String[] topics = topic.split(" ");
 
         StringBuilder newTopic = new StringBuilder();
         for(String t : topics) {

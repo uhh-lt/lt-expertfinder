@@ -13,7 +13,7 @@
                     <input th:field="*{advanced}" id="advancedinput" type="hidden">
                     <p class="w3-large" style="margin-top: 8px;">
                         <!--<label class="w3-text-theme"><b>Topic</b></label>-->
-                        <input th:field="*{topic}" class="w3-input w3-border" type="text"></p>
+                        <input th:field="*{topic}" class="w3-input w3-border" type="text" placeholder='e.g. "Machine Learning" or "Named Entity Recognition"'></p>
                     <div id="advancedsearch" th:styleappend="*{advanced} ? 'display:block' : 'display:none'">
                         <table class="mytable">
 
@@ -31,9 +31,10 @@
                             </tr>
                         </table>
                     </div>
-                    <p style="margin-bottom: 6px;">
+                    <p style="margin-bottom: 6px; position:relative;">
                         <button type="button" id="advancedbutton" onclick="toggleAdvancedInput('advancedsearch')" class="w3-button w3-theme"><i id="advancedinputicon" th:classappend="*{advanced} ? 'fas fa-angle-double-up' : 'fas fa-angle-double-down'"></i>  Advanced</button>
-                        <button name="redirectTo" th:value="${redirectTo}" type="submit" class="w3-button w3-theme"><i class="fa fa-search"></i>  Search</button></p>
+                        <button name="redirectTo" th:value="${redirectTo}" type="submit" class="w3-button w3-theme"><i class="fa fa-search"></i>  Search</button>
+                        <span style="position:absolute;bottom: 0;margin-left:8px;color: #303e45;font-size: 12px;">in 23,595 papers from the ACL Anthology (1965 - 2016).</span></p>
                 </form>
             </div>
         </div>

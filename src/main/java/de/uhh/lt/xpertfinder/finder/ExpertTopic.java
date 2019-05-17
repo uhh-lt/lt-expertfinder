@@ -42,6 +42,7 @@ public class ExpertTopic {
     private int sumHindex; // both: hindex + globalHindex
 
     private boolean initialized = false;
+    private boolean foundResult = true;
 
     public int biggerThanYear;
     public int smallerThanYear;
@@ -65,7 +66,7 @@ public class ExpertTopic {
         logger.debug("Setting up expert topic");
 
         this.topic = topic.toLowerCase();
-        String[] terms = this.topic.split(" |-");
+        String[] terms = this.topic.split(" ");
 
         // get related documents and statistics
         logger.debug("Get relevant documents");
@@ -74,8 +75,10 @@ public class ExpertTopic {
         if(result.documents.isEmpty() && result.info.isEmpty()) {
             logger.error("NO DOCUMENTS");
             initialized = false;
+            foundResult = false;
             return;
         }
+        foundResult = true;
 
         // NEW
         List<Object[]> documentInformation = aanDao.findDocumentInformationByIds(result.documents);
@@ -231,5 +234,13 @@ public class ExpertTopic {
 
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public boolean isFoundResult() {
+        return foundResult;
+    }
+
+    public void setFoundResult(boolean foundResult) {
+        this.foundResult = foundResult;
     }
 }
