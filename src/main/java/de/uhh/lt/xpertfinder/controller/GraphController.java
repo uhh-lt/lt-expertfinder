@@ -43,9 +43,11 @@ public class GraphController extends SessionController {
 
     @GetMapping(value = "/graph")
     public String testcontroller2(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, BindingResult errors, Model model) {
-
-        if(expertTopic.isInitialized()) {
+        if(expertTopic.isInitialized() && expertTopic.isFoundResult()) {
             showGraph(expertTopic, expertQuery, model);
+        } else if (expertTopic.isInitialized() && !expertTopic.isFoundResult()) {
+            System.out.println("no results!");
+            model.addAttribute("noresult", "No results for the query '" + expertQuery.getTopic() + "' :(");
         } else {
             System.out.println("not initialized!");
         }

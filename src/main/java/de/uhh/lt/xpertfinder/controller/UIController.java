@@ -53,9 +53,9 @@ public class UIController extends SessionController {
 
     @GetMapping("/ui")
     public String ui(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic expertTopic, BindingResult errors, Model model) {
-        if(expertTopic.isInitialized()) {
+        if(expertTopic.isInitialized() && expertTopic.isFoundResult()) {
             showUi(expertTopic, expertQuery, model);
-        } else if (!expertTopic.isInitialized() && !expertTopic.isFoundResult()) {
+        } else if (expertTopic.isInitialized() && !expertTopic.isFoundResult()) {
             System.out.println("no results!");
             model.addAttribute("noresult", "No results for the query '" + expertQuery.getTopic() + "' :(");
         } else {

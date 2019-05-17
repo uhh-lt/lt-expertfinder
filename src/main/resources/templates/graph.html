@@ -22,6 +22,10 @@
     <!-- The Grid -->
     <div th:styleappend="${graph != null ? 'position:absolute; top:0; left:0; right:0' : ''}" style="max-width: 1400px;margin: auto; padding-left:16px; padding-right:16px;" th:include="fragments/search :: expertSearchForm" th:with="redirectTo='graph', showMethod=true"></div>
 
+    <div th:if="${noresult}" style="text-align: center; font-size: 20px; margin-top: 64px;">
+        <p th:text="${noresult}"></p>
+    </div>
+
     <div th:if="${graph}" class="w3-left w3-card w3-round w3-white" style="position:absolute;">
         <div class="w3-container w3-padding">
             <input style="margin: 10px 0; display: inline-block; padding: 7px;" class="w3-border" type="text" id="search">
@@ -110,7 +114,12 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     var graph = /*[[${graph}]]*/ null;
-    var query = /*[[${expertQuery.topic}]]*/ null;
+    var querytopic = /*[[${expertQuery.topic}]]*/ null;
+    var queryparams = /*[[${expertQuery.methodParamMap[0]}]]*/ null;
+    var querymethod = /*[[${expertQuery.getMethod()[0]}]]*/ null;
+    if(queryparams !== null) {
+        queryparams = JSON.stringify(queryparams);
+    }
     var graphsize = /*[[${graphsize}]]*/ 1;
     /*]]>*/
 </script>

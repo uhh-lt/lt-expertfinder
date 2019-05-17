@@ -38,14 +38,27 @@ public class TableController extends SessionController {
     public String table(@ModelAttribute("expertQuery") ExpertQuery expertQuery, @ModelAttribute("expertTopic") ExpertTopic lol, BindingResult errors, Model model) {
 
         if(expertQuery.getTopic() == null || expertQuery.getTopic().isEmpty()) {
-            // nothing
+            System.out.println("not initialized!");
         } else {
             List<List<ExpertResult>> results = evaluateExpertRetrieval(expertQuery);
-            model.addAttribute("method1name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]).getName());
-            model.addAttribute("method2name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[1]).getName());
-            model.addAttribute("method3name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[2]).getName());
-            model.addAttribute("method4name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[3]).getName());
-            model.addAttribute("result", results);
+            if(results.isEmpty()) {
+                System.out.println("no results!");
+                model.addAttribute("noresult", "No results for the query '" + expertQuery.getTopic() + "' :(");
+                lol.setFoundResult(false);
+                lol.setInitialized(true);
+            } else {
+                model.addAttribute("method1name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[0]).getName());
+                model.addAttribute("method2name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[1]).getName());
+                model.addAttribute("method3name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[2]).getName());
+                model.addAttribute("method4name", methodService.getExpertFindingMethodById(expertQuery.getMethod()[3]).getName());
+                model.addAttribute("result", results);
+                if(lol.isFoundResult() && lol.isInitialized()) {
+
+                } else {
+                    lol.setFoundResult(false);
+                    lol.setInitialized(false);
+                }
+            }
         }
 
         model.addAttribute("expertfindingmethods", methodService.getAllExpertFindingMethods());
@@ -64,8 +77,7 @@ public class TableController extends SessionController {
             ExpertTopic expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
             expertTopic.setup(eq.getTopic(), defaultRequest.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), eq.getOptions());
 
-            if(!expertTopic.isInitialized()) {
-                results.add(null);
+            if(!expertTopic.isFoundResult()) {
                 continue;
             }
             results.add(createExpertResult(expertRetrieval.findExperts(expertTopic, eq.getMethod()[i], defaultRequest), defaultRequest.getResults(), expertTopic.getGraph()));

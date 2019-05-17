@@ -74,7 +74,6 @@ public class ExpertTopic {
 
         if(result.documents.isEmpty() && result.info.isEmpty()) {
             logger.error("NO DOCUMENTS");
-            initialized = false;
             foundResult = false;
             return;
         }
@@ -243,4 +242,6 @@ public class ExpertTopic {
     public void setFoundResult(boolean foundResult) {
         this.foundResult = foundResult;
     }
+
+    public void setInitialized(boolean initialize) { this.initialized = initialize; }
 }

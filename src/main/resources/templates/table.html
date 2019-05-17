@@ -30,6 +30,10 @@
 
     <div th:include="fragments/search :: expertSearchForm" th:with="redirectTo='table', showMethod=false"></div>
 
+    <div th:if="${noresult}" style="text-align: center; font-size: 20px; margin-top: 64px;">
+        <p th:text="${noresult}"></p>
+    </div>
+
     <div id="searchresult" style="padding-top: 16px;">
     <table  th:if="${result != null && result.get(0) != null}" class="evaluation-table w3-table-all w3-hoverable w3-large w3-card">
         <tr class="w3-theme">
