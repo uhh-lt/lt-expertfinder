@@ -42,8 +42,7 @@ public class SearchController extends SessionController {
             return new RedirectView("/profile/"+ids.get(0), true);
         }
 
-        if(!redirectTo.equals("table"))
-            expertTopic = createExpertTopic(expertQuery, expertTopic);
+        expertTopic = createExpertTopic(expertQuery, expertTopic);
 
         attributes.addFlashAttribute("expertTopic", expertTopic);
         attributes.addFlashAttribute("expertQuery", expertQuery);
