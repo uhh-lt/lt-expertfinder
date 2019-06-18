@@ -15,7 +15,7 @@ def main():
 
 	timeout = 30
 	if args.timeout:
-		timeout = args.timeout
+		timeout = int(float(args.timeout))
 
 	aan_path = os.path.normpath(args.aan)
 	papers = "papers_text"
