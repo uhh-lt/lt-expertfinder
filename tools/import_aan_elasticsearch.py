@@ -132,7 +132,7 @@ def main():
 				counter = counter + 1
 				if counter % 500 == 0:
 					print("Importing bulk...")
-					es.bulk(index = index, body = bulk_data, refresh = True)
+					es.bulk(index = index, body = bulk_data, refresh = True, request_timeout=60)
 					bulk_data = []
 		else:
 			continue
