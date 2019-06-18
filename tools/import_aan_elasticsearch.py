@@ -5,12 +5,17 @@ from argparse import ArgumentParser
 def main():
 	parser = ArgumentParser()
 	parser.add_argument("-a", "--aan", dest="aan", help="path to AAN", metavar="AAN")
-	
+	parser.add_argument("-t", "--timeout", dest="timeout", help="maximum wait time in seconds for success of one bulk import", metavar="TIMEOUT")
+
 	args = parser.parse_args()
 
 	if not args.aan:
 		parser.print_help()
 		return
+
+	timeout = 30
+	if args.timeout:
+		timeout = args.timeout
 
 	aan_path = os.path.normpath(args.aan)
 	papers = "papers_text"
@@ -132,7 +137,7 @@ def main():
 				counter = counter + 1
 				if counter % 500 == 0:
 					print("Importing bulk...")
-					es.bulk(index = index, body = bulk_data, refresh = True, request_timeout=60)
+					es.bulk(index = index, body = bulk_data, refresh = True, request_timeout=timeout)
 					bulk_data = []
 		else:
 			continue
