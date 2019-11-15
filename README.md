@@ -28,16 +28,16 @@ The demonstration paper "LT Expertfinder: An Evaluation Framework for Expert Fin
  - Java 1.8
  - Maven
  - Python > 3
-     - Elasticsearch module: pip install elasticsearch
-     - MySQL module: pip install mysql-connector
  - Docker
  - Docker-Compose
  
  #### 0.1 Install Python Dependencies
  - Navigate to the tools directory: cd .../lt-expertfinder/tools/
- - Create a new virtual environment: python3 -m venv env
+ - Please make sure that you use Python > 3, you might need to type python3 instead of python! Check version with python3 --version or python --version
+ - Create a new virtual environment: python -m venv env
  - Activate the new virtual environment: source env/bin/activate
- - Install dependencies: pip3 install -r requirements.txt
+ - Please make sure that you use the correct pip in the following command. You might need to type pip3 instead of pip!
+ - Install dependencies: pip install -r requirements.txt
  - Please use this virtual environment for the following steps, if you are asked to run a python script!
  - Once finished, you can deactivate the virtual environment: deactivate
 
@@ -73,8 +73,7 @@ The demonstration paper "LT Expertfinder: An Evaluation Framework for Expert Fin
 
 #### 3.2 Import the GoogleScholar Crawl
 - Navigate to the datasets directory: cd /path/to/lt-expertfinder/datasets/
-- Find the file called google_scholar_crawl.tar.gz and extract the contents to a folder of your choice. Now, let's assume
-  the path to the extracted google_scholar_crawl directory is /path/to/google_scholar_crawl/
+- Find the file called google_scholar_crawl.tar.gz and extract the contents to a folder of your choice. Now, let's assume the path to the extracted google_scholar_crawl directory is /path/to/google_scholar_crawl/
 - Navigate to the tools directory: cd /path/to/lt-expertfinder/tools/
 - Make sure that the docker containers are running: docker ps
 - Run the GoogleScholar Crawl import script: python import_googlescholarmysql.py -p /path/to/google_scholar_crawl
