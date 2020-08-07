@@ -21,6 +21,7 @@
  - Install dependencies: pip install -r requirements.txt
  - Please use this virtual environment for the following steps, if you are asked to run a python script!
  - Once finished, you can deactivate the virtual environment: deactivate
+
 ![Step 1](/guide/step1.png)
 
 #### 1. Getting started with Docker and Docker-Compose
@@ -34,11 +35,13 @@
     - stop all docker containers: docker-compose -f docker-compose-dev.yml down
     - sudo chmod 777 data/elasticsearch/
     - restart all docker containers: docker-compose -f docker-compose-dev.yml up -d
+  
 ![Step 2](/guide/step2.png)
 
 #### 3.1 Download the ACL Anthology Network (AAN) data
 - Download the AAN dataset from http://tangra.cs.yale.edu/newaan/index.php/home/download
 - Extract the *.tar.gz, Let's assume the path on your local machine to AAN is now /path/to/aan/
+
 ![Step 3.1](/guide/step31.png)
 
 #### 3.2 Import the ACL Anthology Network (AAN) data
@@ -46,6 +49,7 @@
 - (For the next step, please make sure that the MySQL Database as well as the Elasticsearch Index are running with docker ps as we are now going to import the AAN)
 - Import the AAN full text PDFs: python import_aan_elasticsearch.py -a /path/to/aan/
 - Wait until the import is finished
+
 ![Step 3.2](/guide/step32.png)
 
 #### 4. Import the MySQL Dump
