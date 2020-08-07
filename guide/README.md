@@ -48,7 +48,7 @@
 - Wait until the import is finished
 ![Step 3.2](/guide/step32.png)
 
-#### 4 Import the MySQL Dump
+#### 4. Import the MySQL Dump
 In this step, you will import authors, documents, their relations (citations, collaborations, authorships), extracted keywords, WikiData crawl and GoogleScholar crawl that contain further information about each author from our provided MySQL dump.
 Instead of using the MySQL Dump, you can also manually recreate the database with our scripts. However, this will take some time. If you want to construct the database yourself, please follow the instructions [here](../README.md).
 - Make sure that docker containers are running: docker ps
