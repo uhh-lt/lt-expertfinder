@@ -60,6 +60,7 @@ Instead of using the MySQL Dump, you can also manually recreate the database wit
 - Connect to MySQL docker: docker exec -ti docker_mysql_1 bash
 - Apply backup: mysql -uroot -p xpertfinder < xpertfinder_backup.sql
 - exit
+
 ![Step 4](/guide/step4.png)
 
 #### 5. Start developing!
