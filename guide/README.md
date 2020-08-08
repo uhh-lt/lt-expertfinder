@@ -58,7 +58,7 @@ Instead of using the MySQL Dump, you can also manually recreate the database wit
 - Make sure that docker containers are running: docker ps
 - Copy SQL backup to MySQL Docker Container: docker cp /path/to/lt-expertfinder/datasets/mysql_dump.sql docker_mysql_1:mysql_dump.sql
 - Connect to MySQL docker: docker exec -ti docker_mysql_1 bash
-- Apply backup: mysql -uroot -p xpertfinder < xpertfinder_backup.sql
+- Apply backup (standard pw is root): mysql -uroot -p xpertfinder < mysql_dump.sql
 - exit
 
 ![Step 4](/guide/step4.png)
@@ -67,7 +67,7 @@ Instead of using the MySQL Dump, you can also manually recreate the database wit
 - Open this project (/path/to/lt-expertfinder/) with the editor of your choice
 ![Step 5.1](/guide/step51.png)
 - (For the next step, please make sure that the MySQL Database as well as the Elasticsearch Index are running with docker ps as we are now going to start the LT Expertfinder)
-- Please make sure that the project SDK for this project is set to Java 1.8. (You can download the Java SDK 1.8 from Oracle [here](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html), however, you will need to create an Oracle Account)
+- Please make sure that the project SDK for this project is set to Java 1.8. (You can download the OpenJDK 1.8 [here](https://jdk.java.net/) or the Java SDK 1.8 from Oracle [here](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html), however, you will need to create an Oracle Account)
 ![Step 5.2](/guide/step52.png)
 - Rightclick /src/main/java/de.uhh.lt.xpertfinder/Application.class and Select "Run As Java Application"
 ![Step 5.3](/guide/step53.png)
