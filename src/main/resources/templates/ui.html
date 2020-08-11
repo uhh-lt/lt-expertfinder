@@ -147,8 +147,26 @@
                     </th:block>
                 </div>
 
-                <!-- End Right Column -->
+              <div class="w3-card w3-round w3-white" th:if="${resultJSON}" style="margin-top: 16px;">
+
+                <header class="w3-container w3-theme" style="border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                  <h4>Download</h4>
+                </header>
+
+                <div class="w3-container">
+                  <p>
+                    <button type="button" onclick="downloadResult('expert_result.json', 0)" class="w3-button w3-theme"><i class="fas fa-download" style="margin-right: 6px"></i> Download Expert Result</button>
+                  </p>
+                  <p>
+                    <button type="button" onclick="downloadResult('document_result.json', 1)" class="w3-button w3-theme"><i class="fas fa-download" style="margin-right: 6px"></i> Download Document Result</button>
+                  </p>
+                </div>
+
+              </div>
+
+            <!-- End Right Column -->
             </div>
+
 
             <!-- End Grid -->
         </div>
@@ -158,6 +176,8 @@
     <br>
 
     <!-- Footer -->
+  <script th:replace="fragments/general :: downloadscript"></script>
+
     <script th:replace="fragments/general :: multiplemethodsscript"></script>
 
     <div th:replace="fragments/general :: footer"></div>

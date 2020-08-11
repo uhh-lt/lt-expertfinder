@@ -1,6 +1,5 @@
 package de.uhh.lt.xpertfinder.finder;
 
-import java.util.List;
 import java.util.Map;
 
 public class ExpertRetrievalResult {

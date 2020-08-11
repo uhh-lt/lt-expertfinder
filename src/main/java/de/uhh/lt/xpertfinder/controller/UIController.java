@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.swing.text.Document;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -111,6 +112,10 @@ public class UIController extends SessionController {
         ExpertStatistics statistics = new ExpertStatistics(expertTopic.getRelevantDocuments(), graph.getDocs().size(), graph.getAuthors().size(), graph.getNumAuthDoc(), graph.getNumDocDoc(), graph.getNumAuthAuth());
         model.addAttribute("statistics", statistics);
 
+        // add json (for download) to the view
+        model.addAttribute("resultJSON", gson.toJson(expertResults));
+        model.addAttribute("documentResultJSON", gson.toJson(documentResults));
+
         logger.debug("Finished showing UI after " + (System.nanoTime() - time) + " nanoseconds");
     }
 
@@ -151,6 +156,7 @@ public class UIController extends SessionController {
         for(String author : authorList) {
             ExpertResult er = new ExpertResult();
             er.setName(author);
+            er.setScore(authorRelevanceMap.getOrDefault(author, 0.0d));
 
             // set id
             Long id = graph.getAuthorId(author);
@@ -190,13 +196,7 @@ public class UIController extends SessionController {
 
             // set documents
             List<String> fileList =  graph.getAuthorDocumentNeighbors().get(author);
-            List<Object[]> documentInformationList = aanDao.findDocumentInformationByIds(fileList);
-            List<DocumentResult> documents = new ArrayList<>();
-            for(Object[] obj : documentInformationList) {
-                documents.add(new DocumentResult((String) obj[1], (String) obj[0], documentRelevanceMap.getOrDefault((String) obj[0], 0d), (String) obj[3], (int) obj[2]));
-            }
-//            Collections.sort(documents, (o1, o2) -> o2.getCitations() - o1.getCitations());
-            er.setDocuments(documents);
+            er.setDocuments(getDocumentInfo(fileList, documentRelevanceMap));
 
             // set google aanprofile information: image + description
             GoogleScholarAuthor googleProfile = googleMap.get(id);
@@ -215,6 +215,64 @@ public class UIController extends SessionController {
             result.add(er);
         }
 
+        return result;
+    }
+
+    private List<DocumentResult> getDocumentInfo(List<String> fileList, Map<String, Double> documentRelevanceMap) {
+        List<DocumentResult> result = new ArrayList<>();
+
+        if(fileList.size() == 0) {
+            return result;
+        }
+
+        // get document information
+        List<Object[]> documentInformationList = aanDao.findDocumentInformationByIds(fileList);
+        Map<String, DocumentResult> documentInformationMap = new HashMap<>();
+        for(Object[] obj : documentInformationList) {
+            documentInformationMap.put((String) obj[0], new DocumentResult((String) obj[1], (String) obj[0], -1d, (String) obj[3], (int) obj[2]));
+        }
+
+        // get document citations
+        List<Object[]> documentCitationList = aanDao.findCitationCountForDocuments(fileList);
+        Map<String, Integer> documentCitationMap = new HashMap<>();
+        for(Object[] obj : documentCitationList) {
+            documentCitationMap.put((String) obj[0], ((BigInteger) obj[1]).intValue());
+        }
+
+        // get document authors
+        List<Object[]> documentAuthorList = aanDao.findAuthorsForDocuments(fileList);
+        Map<String, List<Author>> documentAuthorMap = new HashMap<>();
+        for(Object[] obj : documentAuthorList) {
+            String file = (String) obj[0];
+            String author = (String) obj[1];
+            long authorId = ((BigInteger) obj[2]).longValue();
+            List<Author> authors = documentAuthorMap.getOrDefault(file, new ArrayList<>());
+            authors.add(new Author(author, authorId));
+            documentAuthorMap.put(file, authors);
+        }
+
+        // get document keywords
+        // TODO: FIX DUPLICATE KEYWORDS; USE SET !!
+        List<Object[]> documentKeywordList = keywordDao.findKeywordsForDocuments(fileList);
+        Map<String, List<String>> documentKeywordMap = new HashMap<>();
+        for(Object[] obj : documentKeywordList) {
+            List<String> keywords = documentKeywordMap.getOrDefault(obj[2], new ArrayList<>());
+            keywords.add((String) obj[0]);
+            documentKeywordMap.put((String) obj[2], keywords);
+        }
+
+        // create result
+        for(String file : fileList) {
+            DocumentResult documentResult = documentInformationMap.getOrDefault(file, new DocumentResult());
+            documentResult.setCitations(documentCitationMap.getOrDefault(file, 0));
+            documentResult.setAuthors(documentAuthorMap.getOrDefault(file, null));
+            documentResult.setRelevance(documentRelevanceMap.getOrDefault(file, 0d));
+            List<String> keywords = documentKeywordMap.getOrDefault(file, new ArrayList<>());
+            documentResult.setKeywords(keywords.subList(0, Math.min(10, keywords.size())));
+            result.add(documentResult);
+        }
+
+        result.sort((o1, o2) -> o2.getCitations() - o1.getCitations());
         return result;
     }
 
