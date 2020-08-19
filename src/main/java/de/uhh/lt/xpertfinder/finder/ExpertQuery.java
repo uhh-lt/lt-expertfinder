@@ -24,6 +24,11 @@ public class ExpertQuery implements Serializable {
 
     private GraphOptions options;
 
+    private int yearFrom = 1965;
+    private int yearTo = 2016;
+
+    private boolean includeTitle;
+
     public ExpertQuery(String topic, String[] method, MethodService methodService) {
         this.topic = topic;
         this.method = method;
@@ -116,5 +121,29 @@ public class ExpertQuery implements Serializable {
 
     public void setMethodNameMap(List<Map<String, String>> methodNameMap) {
         this.methodNameMap = methodNameMap;
+    }
+
+    public int getYearFrom() {
+        return yearFrom;
+    }
+
+    public void setYearFrom(int yearFrom) {
+        this.yearFrom = yearFrom;
+    }
+
+    public int getYearTo() {
+        return yearTo;
+    }
+
+    public void setYearTo(int yearTo) {
+        this.yearTo = yearTo;
+    }
+
+    public boolean isIncludeTitle() {
+        return includeTitle;
+    }
+
+    public void setIncludeTitle(boolean includeTitle) {
+        this.includeTitle = includeTitle;
     }
 }

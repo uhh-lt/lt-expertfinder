@@ -399,7 +399,10 @@ if(graph !== null) {
     var init_graph;
     if(localStorage['querytopic'] !== undefined && querytopic === localStorage['querytopic'] &&
        localStorage['queryparams'] !== undefined && localStorage['queryparams'] === queryparams &&
-       localStorage['querymethod'] !== undefined && localStorage['querymethod'] === querymethod) {
+       localStorage['querymethod'] !== undefined && localStorage['querymethod'] === querymethod &&
+       localStorage['queryyear1'] !== undefined && localStorage['queryyear1'] === queryyear1 &&
+       localStorage['queryyear2'] !== undefined && localStorage['queryyear2'] === queryyear2 &&
+       localStorage['queryincludetitle'] !== undefined && localStorage['queryincludetitle'] === queryincludetitle) {
         console.log("Loading graph...");
         loadGraph();
         console.log("Graph loaded! :)")
@@ -440,6 +443,9 @@ function loadGraph() {
     querytopic = localStorage['querytopic'];
     queryparams = localStorage['queryparams'];
     querymethod = localStorage['querymethod'];
+    queryyear1 = localStorage['queryyear1'];
+    queryyear2 = localStorage['queryyear2'];
+    queryincludetitle = localStorage['queryincludetitle'];
     var saved_nodes = JSON.parse(localStorage['saved_nodes']);
     var active_links = JSON.parse(localStorage['active_links']);
     var active_nodes = JSON.parse(localStorage['active_nodes']);
@@ -491,6 +497,9 @@ function saveGraph() {
     localStorage['querytopic'] = querytopic;
     localStorage['queryparams'] = queryparams;
     localStorage['querymethod'] = querymethod;
+    localStorage['queryyear1'] = queryyear1;
+    localStorage['queryyear2'] = queryyear2;
+    localStorage['queryincludetitle'] = queryincludetitle;
     localStorage['saved_nodes'] = JSON.stringify(saved_nodes);
     localStorage['active_links'] = JSON.stringify(active_links);
     localStorage['active_nodes'] = JSON.stringify(active_nodes);

@@ -117,6 +117,9 @@
     var querytopic = /*[[${expertQuery.topic}]]*/ null;
     var queryparams = /*[[${expertQuery.methodParamMap[0]}]]*/ null;
     var querymethod = /*[[${expertQuery.getMethod()[0]}]]*/ null;
+    var queryyear1 = /*[[${expertQuery.getYearFrom()}]]*/ null;
+    var queryyear2 = /*[[${expertQuery.getYearTo()}]]*/ null;
+    var queryincludetitle = /*[[${expertQuery.isIncludeTitle()}]]*/ null;
     if(queryparams !== null) {
         queryparams = JSON.stringify(queryparams);
     }

@@ -75,7 +75,7 @@ public class TableController extends SessionController {
                 expertTopic = et;
             } else {
                 expertTopic = new ExpertTopic(elasticSearch, restService, aanDao);
-                expertTopic.setup(eq.getTopic(), defaultRequest.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), eq.getOptions());
+                expertTopic.setup(eq.getTopic(), eq.getYearFrom(), eq.getYearTo(), eq.isIncludeTitle(), defaultRequest.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), eq.getOptions());
 
             }
             if(!expertTopic.isFoundResult()) {

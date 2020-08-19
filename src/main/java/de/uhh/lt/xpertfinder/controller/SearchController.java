@@ -72,10 +72,10 @@ public class SearchController extends SessionController {
             // TODO: THIS IS NOT NICE; FIX IT!
             if(method instanceof InfiniteRandomWeightedMethod) {
                 InfiniteRandomWeightedMethod.InfiniteRandomWeightedRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), InfiniteRandomWeightedMethod.InfiniteRandomWeightedRequest.class);
-                expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), request.getOptions());
+                expertTopic.setup(expertQuery.getTopic(), expertQuery.getYearFrom(), expertQuery.getYearTo(), expertQuery.isIncludeTitle(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), request.getOptions());
             } else {
                 DefaultRequest request = gson.fromJson(expertQuery.getMethodParamMap().get(0).get(expertQuery.getMethod()[0]), DefaultRequest.class);
-                expertTopic.setup(expertQuery.getTopic(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
+                expertTopic.setup(expertQuery.getTopic(), expertQuery.getYearFrom(), expertQuery.getYearTo(), expertQuery.isIncludeTitle(), request.getDocuments(), method.needsPublications(), method.needsCollaborations(), method.needsCitations(), expertQuery.getOptions());
             }
             logger.debug("Finished creating TOPIC after " + (System.nanoTime() - time) + " nanoseconds");
         } else {

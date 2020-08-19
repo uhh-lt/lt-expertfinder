@@ -1,10 +1,7 @@
 package de.uhh.lt.xpertfinder.service;
 
-import com.google.gson.Gson;
 import org.apache.http.HttpHost;
 import org.apache.lucene.search.Explanation;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -62,8 +59,14 @@ public class ElasticSearchService {
 
     // model graph aan
     public MyResult getDocumentIdsByTopicAAN(String topic) {
-        String[] topics = topic.split(" ");
-
+        // extract phrases & terms from search topic
+        topic = topic.toLowerCase();
+        topic = topic.replaceAll("\\s+", " ");
+        String[] phrases = topic.split("\\+");
+        for(int i = 0; i < phrases.length; i++) {
+            phrases[i] = phrases[i].trim();
+        }
+        String[] topics = topic.replaceAll("\\+", "").replaceAll("\\s+", " ").trim().split(" ");
         StringBuilder newTopic = new StringBuilder();
         for(String t : topics) {
             newTopic.append(t + " ");
@@ -74,19 +77,17 @@ public class ElasticSearchService {
 
         List<String> result = new ArrayList<>();
         Map<String,int[]> info = new HashMap<>();
-        Gson gson = new Gson();
 
         final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
 
-        MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("text", topic);
-        matchQueryBuilder.operator(Operator.AND);
-
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.must(matchQueryBuilder);
-        boolQueryBuilder.filter(QueryBuilders.matchPhraseQuery("text", topic));
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("text", topic).operator(Operator.AND));
+        for(String phrase : phrases) {
+            boolQuery.filter(QueryBuilders.matchPhraseQuery("text", phrase));
+        }
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(boolQueryBuilder);
+        searchSourceBuilder.query(boolQuery);
         searchSourceBuilder.size(100);
 
         SearchRequest searchRequest = new SearchRequest(elasticindex);

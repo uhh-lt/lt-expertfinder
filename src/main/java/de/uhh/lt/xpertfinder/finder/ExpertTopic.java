@@ -44,18 +44,13 @@ public class ExpertTopic {
     private boolean initialized = false;
     private boolean foundResult = true;
 
-    public int biggerThanYear;
-    public int smallerThanYear;
-
     public ExpertTopic(ElasticSearchService elasticSearch, RestService restService, AanDao aanDao) {
         this.elasticSearch = elasticSearch;
         this.restService = restService;
         this.aanDao = aanDao;
-        biggerThanYear = 0;
-        smallerThanYear = 3000;
     }
 
-    public void setup(String topic, int count, boolean publication, boolean collaboration, boolean citation, GraphOptions options) {
+    public void setup(String topic, int yearFrom, int yearTo, boolean includeTitle, int count, boolean publication, boolean collaboration, boolean citation, GraphOptions options) {
         if(initialized) {
             logger.error("ALREADY INITIALIZED");
             return;
@@ -65,8 +60,9 @@ public class ExpertTopic {
 
         logger.debug("Setting up expert topic");
 
+        // extract terms from search topic
         this.topic = topic.toLowerCase();
-        String[] terms = this.topic.split(" ");
+        String[] terms = topic.replaceAll("\\+", "").replaceAll("\\s+", " ").trim().split(" ");
 
         // get related documents and statistics
         logger.debug("Get relevant documents");
@@ -79,17 +75,31 @@ public class ExpertTopic {
         }
         foundResult = true;
 
-        // NEW
+        // Filter by year, title, venue
         List<Object[]> documentInformation = aanDao.findDocumentInformationByIds(result.documents);
+        Map<String, String> documentTitleMap = new HashMap<>();
         Map<String, Integer> documentYearMap = new HashMap<>();
+        Map<String, String> documentVenueMap = new HashMap<>();
         for(Object[] docInfo : documentInformation) {
+            documentTitleMap.put((String) docInfo[0], (String) docInfo[1]);
             documentYearMap.put((String) docInfo[0], (int) docInfo[2]);
+            documentVenueMap.put((String) docInfo[0], (String) docInfo[3]);
         }
 
-        System.out.println("BEFORE: " + result.documents.size());
-        result.documents = result.documents.stream().filter(s -> documentYearMap.getOrDefault(s, 0) <= smallerThanYear).collect(Collectors.toList());
-        result.documents = result.documents.stream().filter(s -> documentYearMap.getOrDefault(s, 0) >= biggerThanYear).collect(Collectors.toList());
-        System.out.println("AFTER: " + result.documents.size());
+        System.out.println("BEFORE YEAR FILTER: " + result.documents.size());
+        result.documents = result.documents.stream().filter(s -> documentYearMap.getOrDefault(s, 0) <= yearTo).collect(Collectors.toList());
+        result.documents = result.documents.stream().filter(s -> documentYearMap.getOrDefault(s, 0) >= yearFrom).collect(Collectors.toList());
+        System.out.println("AFTER YEAR FILTER: " + result.documents.size());
+
+
+        if(includeTitle) {
+            System.out.println("BEFORE TITLE FILTER: " + result.documents.size());
+            result.documents = result.documents.stream().filter(s -> {
+                String title = documentTitleMap.getOrDefault(s, "");
+                return containsAllWords(title.toLowerCase(), terms);
+            }).collect(Collectors.toList());
+            System.out.println("AFTER TITLE FILTER: " + result.documents.size());
+        }
 
         if(result.documents.isEmpty()) {
             logger.error("NO DOCUMENTS");
@@ -244,4 +254,10 @@ public class ExpertTopic {
     }
 
     public void setInitialized(boolean initialize) { this.initialized = initialize; }
+
+    private static boolean containsAllWords(String word, String ...keywords) {
+        for (String k : keywords)
+            if (!word.contains(k)) return false;
+        return true;
+    }
 }

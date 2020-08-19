@@ -13,9 +13,30 @@
                     <input th:field="*{advanced}" id="advancedinput" type="hidden">
                     <p class="w3-large" style="margin-top: 8px;">
                         <!--<label class="w3-text-theme"><b>Topic</b></label>-->
-                        <input th:field="*{topic}" class="w3-input w3-border" type="text" placeholder='e.g. "Machine Learning" or "Named Entity Recognition"'></p>
+                        <input th:field="*{topic}" class="w3-input w3-border" type="text" placeholder='e.g. "Named Entity Recognition" or "Machine Learning + Support Vector Machines"'></p>
                     <div id="advancedsearch" th:styleappend="*{advanced} ? 'display:block' : 'display:none'">
-                        <table class="mytable">
+                        <div class="w3-row">
+                          <div class="w3-third">
+                            <label class="w3-text-theme" th:inline="text"><b>From</b></label>
+                            <input th:field="*{yearFrom}" class="w3-input w3-border" type="number" min="1965" max="2016">
+                          </div>
+                          <div class="w3-third" style="line-height: 41px; height: 41px; text-align: center; margin-top: 21px;">
+                            <p class="w3-text-theme" style="line-height: 1.5; display: inline-block; vertical-align: middle; margin: 0; font-size: 18px;"><b><= Publication Year <=</b></p>
+                          </div>
+                          <div class="w3-third">
+                            <label class="w3-text-theme" th:inline="text"><b>To</b></label>
+                            <input th:field="*{yearTo}" class="w3-input w3-border" type="number" min="1965" max="2016">
+                          </div>
+                        </div>
+                      <p>
+                        <input class="w3-radio" th:field="*{includeTitle}" type="radio" name="query-execution" value="false">
+                        <label class="w3-text-theme" th:inline="text"><b>Execute query on fulltext</b></label>
+                        <br>
+                        <input class="w3-radio" th:field="*{includeTitle}" type="radio" name="uery-execution" value="true">
+                        <label class="w3-text-theme" th:inline="text"><b>Execute query on fulltext & title</b></label>
+                      </p>
+                      <hr style="margin-bottom: 4px;">
+                      <table class="mytable">
 
                             <tr th:each="methodMap,methodNumber : *{methodParamMap}" th:styleappend="${(showMethod && methodNumber.index == 0) || !showMethod } ? '' : 'display:none'">
                                 <td>
