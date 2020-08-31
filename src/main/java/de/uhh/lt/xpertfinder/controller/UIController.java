@@ -228,7 +228,7 @@ public class UIController extends SessionController {
     private List<DocumentResult> getDocumentInfo(List<String> fileList, Map<String, Double> documentRelevanceMap) {
         List<DocumentResult> result = new ArrayList<>();
 
-        if(fileList.size() == 0) {
+        if(fileList == null || fileList.size() == 0) {
             return result;
         }
 
