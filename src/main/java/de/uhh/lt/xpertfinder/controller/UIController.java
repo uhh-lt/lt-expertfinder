@@ -122,7 +122,14 @@ public class UIController extends SessionController {
     private List<ExpertResult> createExpertResult(Map<String, Double> authorRelevanceMap, Map<String, Double> documentRelevanceMap, int resultCount, Graph graph) {
         // create author list of author <-> relevance map
         // and reduce list size to result Count
-        List<String> authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(authorRelevanceMap.size(), resultCount));
+
+        // treat result count <= 0 in a special way => print all results!
+        List<String> authorList;
+        if (resultCount > 0) {
+            authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(authorRelevanceMap.size(), resultCount));
+        } else {
+            authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        }
 
         // create list of author ids
         List<Long> authorIds = authorList.stream().map(result -> graph.getAuthorId(result)).collect(Collectors.toList());
@@ -280,8 +287,13 @@ public class UIController extends SessionController {
         List<DocumentResult> result = new ArrayList<>();
 
         // create file list of file <-> relevance map
-        // and reduce list size to result Count
-        List<String> fileList = documentRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(documentRelevanceMap.size(), resultCount));
+        // treat result count <= 0 in a special way => print all results!
+        List<String> fileList;
+        if (resultCount > 0) {
+            fileList = documentRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(documentRelevanceMap.size(), resultCount));
+        } else {
+            fileList = documentRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        }
 
         if(fileList.size() == 0) {
             return result;

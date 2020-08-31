@@ -92,7 +92,14 @@ public class TableController extends SessionController {
         Map<String, Double> documentRelevanceMap = expertRetrieval.getDocumentResultList();
         // create author list of author <-> relevance map
         // and reduce list size to result Count
-        List<String> authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(authorRelevanceMap.size(), resultCount));
+        // treat result count <= 0 in a special way => print all results!
+        List<String> authorList;
+        if (resultCount > 0) {
+            authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()).subList(0, Math.min(authorRelevanceMap.size(), resultCount));
+        } else {
+            authorList = authorRelevanceMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        }
+
 
         // create list of author ids
         List<Long> authorIds = authorList.stream().map(result -> graph.getAuthorId(result)).collect(Collectors.toList());
