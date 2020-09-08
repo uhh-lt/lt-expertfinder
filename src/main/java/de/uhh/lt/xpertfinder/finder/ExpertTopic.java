@@ -62,7 +62,7 @@ public class ExpertTopic {
 
         // extract terms from search topic
         this.topic = topic.toLowerCase();
-        String[] terms = topic.replaceAll("\\+", "").replaceAll("\\s+", " ").trim().split(" ");
+        String[] terms = this.topic.replaceAll("\\+", "").replaceAll("\\s+", " ").trim().split(" ");
 
         // get related documents and statistics
         logger.debug("Get relevant documents");
